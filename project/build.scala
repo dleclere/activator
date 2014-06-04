@@ -29,7 +29,7 @@ object TheActivatorBuild extends Build {
       sys.props("activator.home") = fixFileForURIish(bd.getAbsoluteFile)
       bd
     }
-  ) 
+  )
   // TODO : Add ++ play.Project.intellijCommandSettings Play 2.3 style to settings above
 
   val root = (

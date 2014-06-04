@@ -9,26 +9,26 @@ object LocalTemplateRepo {
   val localTemplateSourceDirectory = SettingKey[File]("local-template-source-directory")
   val localTemplateCache = SettingKey[File]("local-template-cache")
   val localTemplateCacheCreated = TaskKey[File]("local-template-cache-created")
-  val remoteTemplateCacheUri = SettingKey[String]("remote-template-cache-uri")
-  
-  
+  val remoteTemplateCacheUris = SettingKey[Array[RemoteTemplateRepo]]("remote-template-cache-uris")
+
+
   def settings: Seq[Setting[_]] = Seq(
     localTemplateCache <<= target(_ / "template-cache"),
-    localTemplateCacheCreated <<= (localTemplateCache, Keys.fullClasspath in Runtime, remoteTemplateCacheUri) map makeTemplateCache,
+    localTemplateCacheCreated <<= (localTemplateCache, Keys.fullClasspath in Runtime, remoteTemplateCacheUris) map makeTemplateCache,
     scalaVersion := Dependencies.scalaVersion,
     libraryDependencies += Dependencies.templateCache,
     // TODO - Allow debug version for testing?
-    remoteTemplateCacheUri := "http://downloads.typesafe.com/typesafe-activator"
+    remoteTemplateCacheUris := Array("typesafe" withUri "http://downloads.typesafe.com/typesafe-activator")
   )
-  
-  def invokeTemplateCacheRepoMakerMain(cl: ClassLoader, dir: File, uri: String): Unit =
-    invokeMainFor(cl, "activator.templates.TemplateCacheSeedGenerator", Array("-remote", uri, dir.getAbsolutePath))
-  
+
+  def invokeTemplateCacheRepoMakerMain(cl: ClassLoader, dir: File, uris: Array[RemoteTemplateRepo]): Unit =
+    invokeMainFor(cl, "activator.templates.TemplateCacheSeedGenerator", uris.flatMap(uri => Array("-remote", uri.name, uri.uri)) ++ Array(dir.getAbsolutePath))
+
   private def makeClassLoaderFor(classpath: Keys.Classpath): java.net.URLClassLoader = {
     val jars = classpath map (_.data.toURL)
     new java.net.URLClassLoader(jars.toArray, null)
   }
-  
+
   private def invokeMainFor(cl: ClassLoader, mainClass: String, args: Array[String]): Unit = {
     println("Loading " + mainClass + " from: " + cl)
     val maker = cl.loadClass(mainClass)
@@ -38,7 +38,7 @@ object LocalTemplateRepo {
     mainMethod.invoke(null, args)
   }
 
-  def makeTemplateCache(targetDir: File, classpath: Keys.Classpath, uri: String): File = {
+  def makeTemplateCache(targetDir: File, classpath: Keys.Classpath, uris: Array[RemoteTemplateRepo]): File = {
     // TODO - We should check for staleness here...
     if(!targetDir.exists) try {
       IO createDirectory targetDir
@@ -46,7 +46,7 @@ object LocalTemplateRepo {
       // Akka requires this crazy
       val old = Thread.currentThread.getContextClassLoader
       Thread.currentThread.setContextClassLoader(cl)
-      try invokeTemplateCacheRepoMakerMain(cl, targetDir, uri)
+      try invokeTemplateCacheRepoMakerMain(cl, targetDir, uris)
       finally Thread.currentThread.setContextClassLoader(old)
     } catch {
       case ex: Exception =>
@@ -55,4 +55,11 @@ object LocalTemplateRepo {
     }
     targetDir
   }
+
+  case class RemoteTemplateRepo(name: String, uri: String)
+
+  implicit class RichRemoteTemplateRepo(val name: String) extends AnyVal {
+    def withUri(uri: String): RemoteTemplateRepo = RemoteTemplateRepo(name, uri)
+  }
+
 }

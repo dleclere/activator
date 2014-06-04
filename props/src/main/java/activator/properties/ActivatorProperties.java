@@ -150,6 +150,10 @@ public class ActivatorProperties {
     return ACTIVATOR_PREVIOUS_USER_CONFIG_HOME() + "/config.json";
   }
 
+  public static String ACTIVATOR_USER_REPOSITORIES_FILE() {
+    return ACTIVATOR_USER_CONFIG_HOME() + "/repositories.properties";
+  }
+
   public static String ACTIVATOR_VERSION_FILE() {
     // this filename is also constructed in the launcher config file, so keep
     // in sync with that...

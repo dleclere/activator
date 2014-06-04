@@ -3,16 +3,19 @@
  */
 package activator
 
+import java.net.URI
+import java.util.Properties
+import java.io.{ FileInputStream, File }
+import scala.collection.JavaConverters._
 import activator.properties.ActivatorProperties
 import activator.properties.ActivatorProperties.SCRIPT_NAME
 import activator.cache._
 import akka.actor.ActorRefFactory
-import java.io.File
 import activator.cache.RemoteTemplateRepository
+import activator.templates.repository.UriRemoteTemplateRepository
 import com.typesafe.config.ConfigFactory
 import akka.actor.ActorSystem
 import akka.actor.ActorContext
-import akka.event.LoggingAdapter
 
 // This helper constructs the template cache in the default CLI/UI location.
 object UICacheHelper {
@@ -31,10 +34,13 @@ object UICacheHelper {
   val localSeed = Option(ActivatorProperties.ACTIVATOR_TEMPLATE_LOCAL_REPO) map (new File(_)) filter (_.isDirectory)
 
   def makeDefaultCache(actorFactory: ActorRefFactory)(implicit timeout: akka.util.Timeout): TemplateCache = {
+    val loggingAdapter = log(actorFactory)
+    val privateRepos = RepositoriesConfig.getRepositories.
+      map(rc => new UriRemoteTemplateRepository(rc.name, new URI(rc.uri), loggingAdapter))
     DefaultTemplateCache(
       actorFactory = actorFactory,
       location = localCache,
-      remote = RemoteTemplateRepository(config, log(actorFactory)),
+      remotes = Iterable(RemoteTemplateRepository(config, loggingAdapter)) ++ privateRepos,
       seedRepository = localSeed)
   }
 
@@ -53,4 +59,26 @@ object UICacheHelper {
     val bashFile = fileFor(ActivatorProperties.ACTIVATOR_LAUNCHER_BASH, SCRIPT_NAME)
     Seq(batFile, jarFile, bashFile).flatten
   }
+
+  case class RepositoryConfig(name: String, uri: String)
+
+  object RepositoriesConfig {
+
+    val repositoriesFile = new File(activator.properties.ActivatorProperties.ACTIVATOR_USER_REPOSITORIES_FILE).getCanonicalFile
+
+    def getRepositories: Iterable[RepositoryConfig] = {
+      if (repositoriesFile.exists()) {
+        val input = new FileInputStream(repositoriesFile)
+        val repositories = new Properties()
+        try {
+          repositories.load(input)
+        } finally {
+          input.close()
+        }
+
+        repositories.asScala.map(entry => RepositoryConfig(entry._1, entry._2))
+      } else Iterable.empty
+    }
+  }
+
 }
