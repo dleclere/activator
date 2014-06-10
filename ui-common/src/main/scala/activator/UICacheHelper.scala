@@ -4,8 +4,7 @@
 package activator
 
 import java.net.URI
-import java.util.Properties
-import java.io.{ FileInputStream, File }
+import java.io.File
 import scala.collection.JavaConverters._
 import activator.properties.ActivatorProperties
 import activator.properties.ActivatorProperties.SCRIPT_NAME
@@ -17,6 +16,7 @@ import com.typesafe.config.ConfigFactory
 import akka.actor.ActorSystem
 import akka.actor.ActorContext
 import akka.event.LoggingAdapter
+import sbt.IO
 
 // This helper constructs the template cache in the default CLI/UI location.
 object UICacheHelper {
@@ -71,14 +71,7 @@ object UICacheHelper {
       loggingAdapter.info(s"Checking for repositories file [${repositoriesFile.getAbsolutePath}].")
       if (repositoriesFile.exists()) {
         loggingAdapter.info("private repositories found.")
-        val input = new FileInputStream(repositoriesFile)
-        val repositories = new Properties()
-        try {
-          repositories.load(input)
-        } finally {
-          input.close()
-        }
-
+        val repositories = IO.readProperties(repositoriesFile)
         repositories.asScala.map { entry =>
           val repo = RepositoryConfig(entry._1, entry._2)
           loggingAdapter.info(s"Found private repo [$repo].")
