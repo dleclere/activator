@@ -16,6 +16,7 @@ import activator.templates.repository.UriRemoteTemplateRepository
 import com.typesafe.config.ConfigFactory
 import akka.actor.ActorSystem
 import akka.actor.ActorContext
+import akka.event.LoggingAdapter
 
 // This helper constructs the template cache in the default CLI/UI location.
 object UICacheHelper {
@@ -35,7 +36,7 @@ object UICacheHelper {
 
   def makeDefaultCache(actorFactory: ActorRefFactory)(implicit timeout: akka.util.Timeout): TemplateCache = {
     val loggingAdapter = log(actorFactory)
-    val privateRepos = RepositoriesConfig.getRepositories.
+    val privateRepos = RepositoriesConfig.getRepositories(loggingAdapter).
       map(rc => new UriRemoteTemplateRepository(rc.name, new URI(rc.uri), loggingAdapter))
     DefaultTemplateCache(
       actorFactory = actorFactory,
@@ -64,10 +65,12 @@ object UICacheHelper {
 
   object RepositoriesConfig {
 
-    val repositoriesFile = new File(activator.properties.ActivatorProperties.ACTIVATOR_USER_REPOSITORIES_FILE).getCanonicalFile
+    val repositoriesFile = new File(activator.properties.ActivatorProperties.ACTIVATOR_USER_REPOSITORIES_FILE).getAbsoluteFile
 
-    def getRepositories: Iterable[RepositoryConfig] = {
+    def getRepositories(loggingAdapter: LoggingAdapter): Iterable[RepositoryConfig] = {
+      loggingAdapter.info(s"Checking for repositories file [${repositoriesFile.getAbsolutePath}].")
       if (repositoriesFile.exists()) {
+        loggingAdapter.info("private repositories found.")
         val input = new FileInputStream(repositoriesFile)
         val repositories = new Properties()
         try {
@@ -76,8 +79,15 @@ object UICacheHelper {
           input.close()
         }
 
-        repositories.asScala.map(entry => RepositoryConfig(entry._1, entry._2))
-      } else Iterable.empty
+        repositories.asScala.map { entry =>
+          val repo = RepositoryConfig(entry._1, entry._2)
+          loggingAdapter.info(s"Found private repo [$repo].")
+          repo
+        }
+      } else {
+        loggingAdapter.info("No private repositories found.")
+        Iterable.empty
+      }
     }
   }
 
