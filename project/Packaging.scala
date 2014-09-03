@@ -49,8 +49,8 @@ object Packaging {
     localRepoArtifacts := Seq.empty,
     resolvers in TheActivatorBuild.dontusemeresolvers <+= localRepo apply { f => Resolver.file(lrepoName, f)(Resolver.ivyStylePatterns) },
     localRepoProjectsPublished <<= (TheActivatorBuild.publishedProjects map (publishLocal in _)).dependOn,
-    localRepoCreation <<= (localRepo, localRepoArtifacts, ivySbt in TheActivatorBuild.dontusemeresolvers, streams, localRepoProjectsPublished) map { (r, m, i, s, _) =>
-      val licenses = IvyHelper.createLocalRepository(m, lrepoName, i, s.log)
+    localRepoCreation <<= (localRepo, localRepoArtifacts, ivySbt in TheActivatorBuild.dontusemeresolvers, streams, localRepoProjectsPublished, target) map { (r, m, i, s, _, t) =>
+      val licenses = IvyHelper.createLocalRepository(m, lrepoName, i, t, s.log)
       LocalRepoReport(r, licenses)
     },
     localRepoCreated <<= localRepoCreation map (_.location),
@@ -186,7 +186,7 @@ object Packaging {
     // TODO - Add a local repository for resolving...
     if(!tprops.exists) IO.write(tprops, """
 [scala]
-  version: %s
+  version: ${sbt.scala.version-auto}
 
 [app]
   org: com.typesafe.activator
@@ -212,7 +212,7 @@ object Packaging {
   checksums: ${sbt.checksums-sha1,md5}
   override-build-repos: ${sbt.override.build.repos-false}
   repository-config: ${sbt.repository.config-${sbt.global.base-${user.home}/.sbt}/repositories}
-""" format(scalaVersion, version, launcherGeneration))
+""" format(version, launcherGeneration))
     tprops -> "sbt/sbt.boot.properties"
   }
 

@@ -58,7 +58,10 @@ object UICacheHelper {
     val batFile = fileFor(ActivatorProperties.ACTIVATOR_LAUNCHER_BAT, SCRIPT_NAME + ".bat")
     val jarFile = fileFor(ActivatorProperties.ACTIVATOR_LAUNCHER_JAR, ActivatorProperties.ACTIVATOR_LAUNCHER_JAR_NAME)
     val bashFile = fileFor(ActivatorProperties.ACTIVATOR_LAUNCHER_BASH, SCRIPT_NAME)
-    Seq(batFile, jarFile, bashFile).flatten
+    if (jarFile.isDefined && (batFile.isDefined || bashFile.isDefined))
+      Seq(batFile, jarFile, bashFile).flatten
+    else
+      Nil
   }
 
   case class RepositoryConfig(name: String, uri: String)

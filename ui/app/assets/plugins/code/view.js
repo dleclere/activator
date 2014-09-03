@@ -152,7 +152,8 @@ define([
       }
     },
     onSwitchTheme: function(data, event) {
-      this.subView().switchTheme(event.target.innerText);
+      var theme = event.target.innerText || event.target.text;
+      this.subView().switchTheme(theme);
     },
     onSetFontSize: function(data, event) {
       this.subView().setFontSize(event.target.dataset.fontSize);

@@ -125,7 +125,7 @@ object ActivatorCli extends ActivatorCliHelper {
     val statsRecorded = TemplatePopularityContest.recordClonedIgnoringErrors(template.name)
 
     // TODO - Is this duration ok?
-    Await.result(
+    val result = Await.result(
       cloneTemplate(
         cache,
         template.id,
@@ -135,7 +135,12 @@ object ActivatorCli extends ActivatorCliHelper {
         additionalFiles = UICacheHelper.scriptFilesForCloning),
       Duration(5, MINUTES))
 
-    printUsage(pName, projectDir)
+    result match {
+      case _: ProcessSuccess[_] => printUsage(pName, projectDir)
+      case f: ProcessFailure =>
+        f.failures.foreach { System.err.println(_) }
+        System.err.println("Failed to clone the template. Make sure you have internet access and please try again.")
+    }
 
     // don't wait too long on this remote call, we ignore the
     // result anyway; just don't want to exit the JVM too soon.

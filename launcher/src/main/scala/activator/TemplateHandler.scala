@@ -47,7 +47,7 @@ object TemplateHandler extends ActivatorCliHelper {
       "Featured Tutorial Templates" -> featuredNotSeed,
       "Other Seed Templates" -> unfeaturedSeed,
       "Other Tutorial Templates" -> unfeaturedNotSeed) map {
-        case (title, list) => title -> list.sortBy(_.name)
+        case (title, list) => title -> list.sortBy(_.name.toLowerCase)
       }
     sections foreach {
       case (title, ts) if ts.nonEmpty =>

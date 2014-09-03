@@ -23,7 +23,8 @@ object WebSocketUtil {
         if (tokenProvider.compareTokens(queryToken, cookieToken.value))
       } yield socket.f(request)
     } getOrElse {
-      throw new RuntimeException("Bad CSRF token for websocket")
+      Logger.warn("CSRF token check failed for WebSocket connection")
+      Future.successful(Left(Results.Forbidden("CSRF token check failed for WebSocket connection")))
     }
 
     WebSocket(checkedF)(socket.inFormatter, socket.outFormatter)

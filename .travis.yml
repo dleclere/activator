@@ -7,14 +7,15 @@ jdk:
   - openjdk6
 
 script:
-  - sbt $TASKS
+  - sbt -J-XX:PermSize=256M -J-XX:MaxPermSize=512M -J-Xss1024K -J-Xms512M -J-Xmx1024M -J-XX:+CMSClassUnloadingEnabled -J-XX:+UseCodeCacheFlushing -J-XX:+UseConcMarkSweepGC -J-XX:+CMSIncrementalPacing -J-XX:+DoEscapeAnalysis $TASKS
 
 env:
   - TASKS=test
-  - TASKS=integrationTests
+  - TASKS=integrationTestsWithoutOffline
   - TASKS=offlineTests
 
 notifications:
   email:
     - activator@typesafe.com
-  flowdock: 394be381de623fe7bee543e905ac3320
+  flowdock: 2eb8fdbb08ad2e595a21edea64252a22
+            

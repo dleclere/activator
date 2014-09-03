@@ -6,7 +6,7 @@ package activator
 import xsbti.{ AppMain, AppConfiguration }
 import java.awt._
 import javax.swing._
-import java.net.URL
+import java.net.{ URI, URL }
 import sbt.IO
 import com.typesafe.sbtrc.launching.DefaultSbtProcessLauncher
 import activator.properties.ActivatorProperties._
@@ -49,8 +49,8 @@ object PidDetector {
       } return true
       false
     } catch {
-      // TODO - What kind of process failure exceptions do we have to ignore?
-      case e: Exception => // Ignore
+      case e: Exception =>
+        System.err.println("Failed to determine whether Activator is running already; will try to run it a second time but it may fail.")
         false
     }
   private def findProcessLinux(pid: String): Boolean =
@@ -99,8 +99,11 @@ class UIMain extends AppMain {
       val optRepositories: Seq[(String, java.io.File, Option[String])] =
         configuration.provider.scalaProvider.launcher.appRepositories collect {
           case x: xsbti.IvyRepository if (x.id == "activator-local") && (x.url.getProtocol == "file") =>
-            System.err.println("FOUND REPO = " + x.id + " @ " + x.url)
-            (x.id, new java.io.File(x.url.toURI), Some(x.ivyPattern))
+            // Fix UNC path problem on Windows http://www.tomergabel.com/JavaMishandlesUNCPathsOnWindows.aspx
+            var uri: URI = x.url.toURI
+            if (uri.getAuthority != null) uri = new URI(uri.toString.replace("file://", "file:/"))
+            System.err.println("FOUND REPO = " + x.id + " @ " + uri)
+            (x.id, new java.io.File(uri), Some(x.ivyPattern))
         }
       // locate sbt details and store in a singleton
       Global.installSbtLauncher(new DefaultSbtProcessLauncher(configuration, optRepositories = optRepositories))

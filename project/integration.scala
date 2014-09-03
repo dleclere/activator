@@ -17,6 +17,7 @@ object integration {
   
   val mains = TaskKey[Seq[String]]("integration-test-mains", "Discovered integration test main classes")
   val itContext = TaskKey[IntegrationContext]("integration-test-context")
+  val integrationTestsWithoutOffline = taskKey[Unit]("Runs all integration tests without the offline tests")
   val tests = TaskKey[Unit]("integration-tests", "Runs all integration tests")
   val singleTest = InputKey[Seq[IntegrationTestResult]]("integration-test-only", "Runs integration tests that match the given glob")
   val integrationHome = TaskKey[File]("integration-home", "Creates the home directory for use in integration tests.")
@@ -33,10 +34,11 @@ object integration {
       }
     },
     itContext <<= (sbtLaunchJar, localRepoCreated, streams, version, target, scalaVersion, integrationHome) map IntegrationContext.apply,
-    tests <<= (itContext, mains, streams) map { (ctx, ms, s) =>
+    integrationTestsWithoutOffline <<= (itContext, mains, streams) map { (ctx, ms, s) =>
       val results = ms map ctx.runTest
       handleResults(results, s)
-    },	
+    },
+    tests := integrationTestsWithoutOffline.value, // offline adds offline to this
     localRepoArtifacts <+= (Keys.projectID, Keys.scalaBinaryVersion, Keys.scalaVersion) apply {
       (id, sbv, sv) => CrossVersion(sbv,sv)(id)
     },
@@ -135,7 +137,7 @@ case class IntegrationContext(launchJar: File,
   
   private def makePropertiesString(name: String, cwd: File): String =
     """|[scala]
-       |  version: %s
+       |  version: ${sbt.scala.version-auto}
        |
        |[app]
        |  org: com.typesafe.activator
@@ -156,5 +158,5 @@ case class IntegrationContext(launchJar: File,
        |  ivy-home: %s/.ivy2
        |  checksums: ${sbt.checksums-sha1,md5}
        |  override-build-repos: ${sbt.override.build.repos-false}
-       |""".stripMargin format (scalaVersion, version, name, cleanUriFileString(repository.getAbsolutePath), cleanUriFileString(cwd.getAbsolutePath), cwd.getAbsolutePath)
+       |""".stripMargin format (version, name, cleanUriFileString(repository.getAbsolutePath), cleanUriFileString(cwd.getAbsolutePath), cwd.getAbsolutePath)
 }

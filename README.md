@@ -56,9 +56,9 @@ To run a specific test, simply:
 
 To run all the integration tests, simply:
 
-    sbt> integration-tests
+    sbt> integrationTests
 
-
+This also runs offlineTests.
 
 ## Staging a distribution
 
@@ -89,10 +89,13 @@ Activator auto-checks for new versions so to test a new unreleased version you w
 ## Publishing the Distribution
 
 Release overview:
- * if you want to make a "real" release, create a git tag for it like `v1.0.2`.
+ * make sure you have the desired version of the template catalog configured in `project/LocalTemplateRepo.scala`, setting is `localTemplateCacheHash`. Run `latestTemplateCacheHash` task to get latest. Can get the hash for any existing Activator fat distribution by downloading it and digging it out of the included `cache.properties` file.
+ * if you're trying to ship with an old template catalog, you will need to `set LocalTemplateRepo.enableCheckTemplateCacheHash := false` temporarily before you type `publishSigned` and `s3Upload`.
+ * commit the desired template catalog hash to git so your build will be reproducible.
+ * if you want to make a "real" release (not a git-hash-versioned snapshot), create a git tag for it like `v1.0.2`.
  * relaunch sbt; type `show version` and it should have picked up the tag.
  * if you want to make a snapshot/test release, just let sbt use the git commit as the version. `show version` to verify.
- * be sure `test`, `integration-tests`, and `offline-tests` are passing.
+ * be sure `test`, `integrationTests`, `offlineTests`, and `checkTemplateCacheHash` are passing.
  * `publishSigned` then `s3Upload`.
  * push the version tag to github
 

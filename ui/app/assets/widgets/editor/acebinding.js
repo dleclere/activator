@@ -24,7 +24,7 @@ define([
   };
   var theme = settings.observable("editor.theme", "Dark");
   var fontSize = settings.observable("editor.fontSize", "12");
-  editor.setTheme(aceThemes[theme()]);
+  editor.setTheme(aceThemes[theme()] || aceThemes["Dark"]);
   editor.setFontSize(fontSize());
   theme.subscribe(function(v) {
     editor.setTheme(aceThemes[v])

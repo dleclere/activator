@@ -3,6 +3,8 @@
  */
 package activator.properties;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Properties;
 
 // This is a lame-o class that's kinda dirty.  maybe we can clean it up later, but we're using it across two scala versions right now.
@@ -94,14 +96,21 @@ public class ActivatorProperties {
     return file.replaceAll(" ", "%20");
   }
 
-  private static String uriToFilename(String uri) {
+  private static String uriToFilename(String uriString) {
+    String fileString = cleanUriFileString(uriString);
     try {
-      return new java.io.File(new java.net.URI(cleanUriFileString(uri))).getAbsolutePath();
+      java.net.URI uri = new java.net.URI(fileString);
+      // Fix UNC path problem on Windows http://www.tomergabel.com/JavaMishandlesUNCPathsOnWindows.aspx
+      if (uri.getAuthority() != null) {
+        fileString = fileString.replace("file://", "file:/");
+        uri = new java.net.URI(fileString);
+      }
+      return new java.io.File(uri).getAbsolutePath();
     } catch(java.net.URISyntaxException ex) {
       // TODO - fix this error handling to not suck.
-      throw new RuntimeException("BAD URI: " + uri);
+      throw new RuntimeException("BAD URI: " + fileString);
     } catch(java.lang.IllegalArgumentException ex) {
-      throw new RuntimeException("BAD URI: " + uri + "\n", ex);
+      throw new RuntimeException("BAD URI: " + fileString + "\n", ex);
     }
   }
 
@@ -185,7 +194,7 @@ public class ActivatorProperties {
     return lookupOr("activator.template.localrepo", defaultValue);
   }
 
-  public static String ACTIVATOR_LAUNCHER_JAR_NAME() {
+  private static String ACTIVATOR_LAUNCHER_JAR_MATCHING_VERSION_NAME() {
     String version = APP_VERSION();
     if(version != null) {
       // TODO - synch this with build in some better fashion!
@@ -194,14 +203,55 @@ public class ActivatorProperties {
     return null;
   }
 
-  public static String ACTIVATOR_LAUNCHER_JAR() {
-    String value = ACTIVATOR_HOME_FILENAME();
-    String jarname = ACTIVATOR_LAUNCHER_JAR_NAME();
-    if(value != null && jarname != null) {
-      // TODO - synch this with build in some better fashion!
-      return value+"/"+jarname;
+  // this class is a trick to get a lazy singleton
+  private static class LauncherJarHolder {
+    private static File findLauncherJar() {
+      String value = ACTIVATOR_HOME_FILENAME();
+      String jarname = ACTIVATOR_LAUNCHER_JAR_MATCHING_VERSION_NAME();
+      if(value != null && jarname != null) {
+        // The Activator homedir may be from an older version of
+        // activator due to auto-updates.
+        // We first look for a filename that matches our own version,
+        // and if that fails, we glob for any activator-launch-*.jar
+        // in the activator home.
+        File home = new File(value);
+        File jar = new File(home, jarname);
+        if (jar.exists()) {
+          return jar;
+        } else {
+          File[] matches = home.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+              return name.startsWith("activator-launch-") && name.endsWith(".jar");
+            }
+          });
+          if (matches != null && matches.length > 0) {
+            return matches[0];
+          } else {
+            // this really shouldn't happen, so go ahead and spam stderr
+            System.err.println("No activator-launch-*.jar in " + value);
+            return null;
+          }
+        }
+      }
+      return null;
     }
-    return null;
+
+    public static final File launcherJar = findLauncherJar();
+  }
+
+  public static String ACTIVATOR_LAUNCHER_JAR_NAME() {
+    if (LauncherJarHolder.launcherJar != null)
+      return LauncherJarHolder.launcherJar.getName();
+    else
+      return null;
+  }
+
+  public static String ACTIVATOR_LAUNCHER_JAR() {
+    if (LauncherJarHolder.launcherJar != null)
+      return LauncherJarHolder.launcherJar.getPath();
+    else
+      return null;
   }
 
   public static String ACTIVATOR_LAUNCHER_BAT() {

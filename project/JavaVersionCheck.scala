@@ -48,7 +48,7 @@ object JavaVersionCheck {
     Keys.deliverConfiguration := {
       val log = Keys.streams.value.log
       val javacVersion = javacVersionCheck.value
-      log.info("Will publish locally with javac version " + javacVersion)
+      log.info("Will publish with javac version " + javacVersion)
       Keys.deliverConfiguration.value
     },
     Keys.deliverLocalConfiguration := {
