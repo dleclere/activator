@@ -49,7 +49,7 @@ trait PlayRequestHandlerBase extends RequestHandler[PlayRequestHandler.PlayReque
         } yield {
           usePlayRequestStats(sender, id, playStats, actorInfo)
         }
-      case None => log.warning("Cannot call Play request detail information without proper trade id.")
+      case None => log.warning("Cannot call Play request detail information without proper trace id.")
     }
   }
 }

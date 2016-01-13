@@ -1,0 +1,123 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+.omnisearch-wrapper {
+  position: relative;
+  .expand();
+  .row();
+  height: 50px;
+  line-height: 50px;
+}
+
+#omnisearch {
+  background: @slate;
+  height: 50px;
+  width: 50px;
+  input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: @slate url('/assets/images/icons/omnisearch.svg') 15px center no-repeat;
+    font: inherit;
+    width: 50px;
+    height: 50px;
+    line-height: 30px;
+    padding: 10px 10px 10px 40px;
+    .transition(200ms);
+    color: white;
+    &:focus {
+      width: 100%;
+      background-color: @slate-dkr;
+    }
+    .placeholder(@grey);
+  }
+
+  ul {
+    box-shadow: 0 3px 4px rgba(0,0,0,.3);
+    max-height: 600px;
+    display: none;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: @slate;
+    font-size: 13px;
+    .transform(translate3d(0,0,0)); /* fix a glitch in chrome rendering, TODO remove */
+    &.active {
+      display: block;
+    }
+    &.empty:before {
+      display: block;
+      content: 'no results found';
+      color: @grey;
+      padding: 10px 30px;
+    }
+    .heading {
+      background: @slate-ltr;
+      color: @grey;
+      text-transform: uppercase;
+      font-weight: 900;
+      font-size: 11px;
+      line-height: 14px;
+    }
+    li {
+      line-height: 15px;
+      padding: 5px 10px;
+      overflow: hidden;
+      .row();
+      .title {
+        color: white;
+        font-weight: 500;
+        padding: 0 30px 0 10px;
+      }
+      .subtitle {
+        color: @grey;
+        .expand();
+      }
+      svg {
+        margin: 1px 0 0;
+      }
+    }
+    .redirected {
+      opacity: .6;
+      &:before {
+        content: " -> ";
+      }
+      &:after {
+        content: " (redirected) ";
+      }
+    }
+    .option {
+      &:nth-child(odd) {
+        background-color: rgba(0,0,0,.05);
+      }
+      &.selected, &:hover {
+        background-color: @red;
+        .subtitle {
+          color: @red-ltr;
+        }
+        svg g {
+          fill: white;
+        }
+      }
+    }
+  }
+
+  .spinner {
+    display: block;
+    position: absolute;
+    z-index: 99;
+    top: 20px;
+    right: 20px;
+    height: 10px;
+    width: 10px;
+    background: @blue;
+    border-radius: 10px;
+  }
+
+}
+

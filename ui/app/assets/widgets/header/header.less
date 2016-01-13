@@ -1,9 +1,7 @@
 /*
- Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
  */
 @import "../../commons/_base";
-@import "./_breadcrumb";
-@import "./_omnisearch";
 
 .red-icon() {
   background-color: @red;
@@ -14,47 +12,87 @@
 }
 
 #header {
-  background: @slate;
-  color: #fff;
   position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   height: 50px;
   box-shadow: 0 3px 0 rgba(0,0,0,.1);
+  z-index: 99;
+}
+
+#header-top {
+  position: relative;
+  height: @header-banner-closed;
+  .row();
+  background: @slate;
+  color: #fff;
   z-index: 10;
 }
 
-#help, #notifications, #layoutManager {
-  display: block;
-  height: 50px;
-  width: 52px;
-  float: right;
-  border-left: 2px solid @slate-dkr;
-  z-index: 11;
-  dt {
-    .square(50px);
-    background-position: center center;    
+#banner {
+  position: relative;
+  height: @header-banner-height;
+  .row();
+  background: @red;
+  color: #fff;
+  z-index: 5;
+  font-family: Roboto, Helvetica, sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  .button {
+    display: inline-block;
+    padding: 6px 12px;
+    line-height: inherit;
+    vertical-align: middle;
+    background: @blue;
+    color: #fff;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 3px;
+    .title();
+    g {
+      .transition();
+      fill: #fff;
+    }
+    .transition();
+    &:hover, &.active {
+      background: @blue-dkr;
+    }
+
+    margin: 0 5px;
+    border: 1px solid @blue;
+    &.light {
+      background: none;
+      border-color: @grey;
+      color: @grey;
+      &:hover {
+        background: @slate;
+      }
+    }
   }
-  dd {
-    left: auto;
-    right: 0;
+  p {
+    .pcenter();
+  }
+  .properties-filename {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
   }
 }
 
-#help, #notifications {
+#user, #layoutManager, #help {
+  .square(50px);
+  width: 52px;
+  border-left: 2px solid @slate-dkr;
+  dt {
+    .square(50px);
+    background-position: center center;
+  }
+}
+
+#help {
   dt {
     text-align: center;
-  }
-  span {
-    display: inline-block;
-    .square(30px);
-    line-height: 25px;
-    border-radius: 15px;
-    border: 3px solid @grey-dkr;
-    font-size: 16px;
-    margin: 11px;
-    &.glow {
-      border-color: @red;
-    }
   }
   dd {
     background: @slate-dkr;
@@ -86,112 +124,3 @@
     color: @grey;
   }
 }
-
-#help {
-  dt {
-    font-size: 25px;
-    color: @grey;
-  }
-  dd {
-    width: 450px;
-    padding-bottom: 20px;
-  }
-  .group {
-    border-bottom: 1px solid @slate-dkr;
-    padding: 10px 10px 0 50px;
-    background: url(/public/images/header/typesafe.png) 20px 20px no-repeat;
-    &.documentation {
-      background-image: url(/public/images/header/documentation.png);
-    }
-    &.community {
-      background-image: url(/public/images/header/community.png);
-    }
-    a {
-      display: inline-block;
-      &:hover {
-        background: none;
-      }
-    }
-  }
-  h4 {
-    font-size: 16px;
-    color: @blue;
-  }
-}
-
-
-// ----------------
-// LAYOUT BUTTONS
-// ----------------
-#header {
-  .toggleNavigation {
-    .square(50px);
-    float: left;
-    background: @red url(/public/images/icons/stripes.svg) center center no-repeat;
-    .transition();
-    &:hover, .navigationOpened & {
-      background-color: @red-dkr;
-    }
-  }
-}
-
-
-#layoutManager {
-  position: relative;
-  background-color: @red;
-  background-repeat: no-repeat;
-  &:hover, .panelOpened & {
-    background-color: @red-dkr;
-  }
-  dt {
-    background-image: url(/public/images/icons/layouts.svg);
-  }
-  [data-shape='right1'] & dt, .right1 {
-    background-position: 0 0;
-  }
-  [data-shape='right2'] & dt, .right2 {
-    background-position: 0 -50px;
-  }
-  [data-shape='bottom1'] & dt, .bottom1 {
-    background-position: 0 -100px;
-  }
-  [data-shape='bottom2'] & dt, .bottom2 {
-    background-position: 0 -150px;
-  }
-  &:hover .all-options {
-    opacity: .3;
-  }
-  .all-options {
-    position: absolute;
-    top: 36px;
-    right: 1px;
-    .square(14px);
-    background: url(/public/images/icons/layouts.svg) bottom right;
-    opacity: 0;
-    .transition();
-    &:hover {
-      opacity: 1;
-    }
-  }
-  dd {
-    line-height: auto;
-  }
-  button {
-    .square(50px);
-    background-image: url(/public/images/icons/layouts.svg);
-    background-color: @red;
-    float: left;
-    &:hover {
-      background-color: @red-dkr;
-    }
-  }
-
-  [data-shape='right1'] & .right1,
-  [data-shape='right2'] & .right2,
-  [data-shape='bottom1'] & .bottom1,
-  [data-shape='bottom2'] & .bottom2 {
-    display: none;
-  }
-}
-
-

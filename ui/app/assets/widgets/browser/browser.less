@@ -1,0 +1,69 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+.browser {
+  .expand();
+  .no-select();
+  overflow: auto;
+  border-top: 1px solid @grey-ltr;
+  h3 {
+    font: inherit;
+    padding: 3px 10px;
+  }
+  li {
+    position: relative;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAMAAAAoyzS7AAAAA1BMVEV7j53Ne9EWAAAADUlEQVR42gECAP3/AAAAAgABUyucMAAAAABJRU5ErkJggg==);
+    background-repeat: repeat-y;
+  }
+
+  // Create columns
+  .generate-columns(@n, @i: 1) when (@i =< @n) {
+    li {
+      background-position: (20px * @i - 30px) 0;
+      span { padding-left: (20px * @i); }
+      .generate-columns(@n, (@i + 1));
+    }
+  }
+  .generate-columns(20);
+
+  .hiddenNode > span {
+    color: rgba(255,255,255,.6); 
+  }
+  .directory {
+    > span:before {
+      content: " ";
+      display: inline-block;
+      margin-left: -20px;
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+      background: url("/assets/images/browser-type.svg") -20px 0;
+    }
+    ul {
+      display: none;
+    }
+    &.open {
+      > ul {
+        display: block;
+      }
+      > span:before {
+        background-position: 0 0;
+      }
+    }
+  }
+  .active > span{
+    background-color: @blue;
+    color: #fff;
+  }
+  span {
+    display: block;
+    &:hover {
+      background: @grey-dkr;
+    }
+    &.focus {
+      background: @blue;
+    }
+  }
+}

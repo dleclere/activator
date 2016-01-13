@@ -17,9 +17,14 @@ import akka.actor.ActorSystem
 import akka.actor.ActorContext
 import akka.event.LoggingAdapter
 import sbt.IO
+import scala.concurrent.duration._
 
 // This helper constructs the template cache in the default CLI/UI location.
 object UICacheHelper {
+
+  // this is intended to be close to "forever" since if we time
+  // out we'll pretty much fail catastrophically
+  private implicit val timeout = akka.util.Timeout(Duration(240, SECONDS))
 
   // TODO - Config or ActiavtorProperties?
   lazy val config = ConfigFactory.load()
@@ -37,18 +42,18 @@ object UICacheHelper {
   def makeDefaultCache(actorFactory: ActorRefFactory)(implicit timeout: akka.util.Timeout): TemplateCache = {
     val loggingAdapter = log(actorFactory)
     val privateRepos = RepositoriesConfig.getRepositories(loggingAdapter).
-      map(rc => new UriRemoteTemplateRepository(rc.name, new URI(rc.uri), loggingAdapter))
+      map(rc => new UriRemoteTemplateRepository(new URI(rc.uri), loggingAdapter))
     DefaultTemplateCache(
       actorFactory = actorFactory,
-      location = localCache,
-      remotes = Iterable(RemoteTemplateRepository(config, loggingAdapter)) ++ privateRepos,
+      baseDir = localCache,
+      remotes = IndexedSeq(RemoteTemplateRepository(config, loggingAdapter)) ++ privateRepos,
       seedRepository = localSeed)
   }
 
-  def makeLocalOnlyCache(actorFactory: ActorRefFactory)(implicit timeout: akka.util.Timeout): TemplateCache = {
+  def makeLocalOnlyCache(actorFactory: ActorRefFactory): TemplateCache = {
     DefaultTemplateCache(
       actorFactory = actorFactory,
-      location = localCache,
+      baseDir = localCache,
       seedRepository = localSeed)
   }
 

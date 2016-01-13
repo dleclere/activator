@@ -12,7 +12,7 @@ define(['css!./overlay.css', 'text!./overlay.html', 'lib/knockout/knockout', 'co
       this.css = parameters.css || '';
     },
     onRender: function(childElements) {
-      if (this.id != 'overlay-widget')
+      if (this.id !== 'overlay-widget')
         throw new Error("wrong this in onRender " + this);
       if (this.node !== null)
         throw new Error("rendering Overlay twice");

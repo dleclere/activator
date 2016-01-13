@@ -6,7 +6,7 @@ package controllers.api
 import play.api.mvc.{ Action, Controller }
 import play.api.libs.json._
 import java.io.File
-import snap.Platform
+import activator.Platform
 import play.api.data._
 import play.api.data.Forms._
 import play.api.Logger
@@ -76,10 +76,16 @@ object Local extends Controller {
     else "binary"
   }
 
-  // Magically discover the mime type!
-  def getMimeType(file: File): String = {
+  final val mimeDetector = "eu.medsea.mimeutil.detector.MagicMimeMimeDetector"
+
+  // Magically discover the mime type! synchronize all our use of this
+  // library in case that's making it flaky (it seems to throw internal
+  // NPEs sometimes)
+  def getMimeType(file: File): String = synchronized {
     import eu.medsea.mimeutil._
-    MimeUtil.registerMimeDetector("eu.medsea.mimeutil.detector.MagicMimeMimeDetector");
+    if (MimeUtil.getMimeDetector(mimeDetector) == null) {
+      MimeUtil.registerMimeDetector(mimeDetector);
+    }
     val mimeTypes = MimeUtil getMimeTypes file
     MimeUtil.getFirstMimeType(mimeTypes.toString).toString
   }
@@ -150,6 +156,7 @@ object Local extends Controller {
   def browse(location: String) = Action { request =>
     val loc = Platform.fromClientFriendlyFilename(location)
     if (!loc.exists) NotAcceptable(s"${location} is not a file!")
+    else if (!canAccess(loc)) NotAcceptable(s"${location} is not readable!")
     else Ok(Json toJson InterestingFile(loc))
   }
 
@@ -170,6 +177,7 @@ object Local extends Controller {
     val desktop = java.awt.Desktop.getDesktop
     if (!loc.exists) NotAcceptable(s"${location} is not a file or directory!")
     else if (!desktop.isSupported(java.awt.Desktop.Action.OPEN)) NotAcceptable("Opening a file browser is unsupported on your machine.")
+    else if (!canAccess(loc)) NotAcceptable(s"${location} is not readable!")
     else try {
       desktop open loc
       Ok("")
@@ -193,16 +201,16 @@ object Local extends Controller {
     Ok(content)
   }
 
-  val createFileForm = Form(tuple("location" -> text, "isDirectory" -> boolean))
+  val createFileForm = Form(tuple("location" -> text, "isDirectory" -> boolean, "content" -> text))
   def createFile = Action { implicit request =>
-    val (location, isDirectory) = createFileForm.bindFromRequest.get
+    val (location, isDirectory, content) = createFileForm.bindFromRequest.get
     val loc = Platform.fromClientFriendlyFilename(location)
     try {
       import sbt.IO
       if (isDirectory)
         IO.createDirectory(loc)
       else
-        IO.write(loc, "")
+        IO.write(loc, content)
       Logger.debug(s"created $loc OK")
       Ok("")
     } catch {
@@ -244,4 +252,12 @@ object Local extends Controller {
         NotAcceptable(s"failed to delete '$loc': ${e.getMessage}")
     }
   }
+
+  /**
+   * To prevent NPE in Windows when trying to list directories that are so called "junction points".
+   * In case of such a directory File.listFiles will return null and since we have to use Java 6
+   * we cannot use java.nio.* to handle this in a nicer way.
+   */
+  private def canAccess(file: File): Boolean = if (!file.isDirectory) true else file.listFiles != null
+
 }

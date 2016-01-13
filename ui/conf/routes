@@ -6,18 +6,13 @@
 # Templates
 GET         /api/templates/list                          controllers.api.Templates.list
 POST        /api/templates/clone                         controllers.api.Templates.cloneTemplate
+GET         /api/templates/:name/meta                    controllers.api.Templates.meta(name)
 GET         /api/templates/:id/tutorial/*location        controllers.api.Templates.tutorial(id, location)
 
 # Operations on an app
-# TODO: Should these take the app location as a request parameter?
 GET         /api/app/history                             controllers.Application.getHistory
-DELETE      /api/app/history/*id                         controllers.Application.forgetApp(id)
-GET         /api/app/connect/*id                         controllers.Application.connectApp(id)
-
-# sbt things
-POST        /api/sbt/task                                controllers.api.Sbt.task
-POST        /api/sbt/killTask                            controllers.api.Sbt.killTask
-POST        /api/sbt/watchSources                        controllers.api.Sbt.watchSources
+DELETE      /api/app/history/*appId                      controllers.Application.forgetApp(appId)
+GET         /api/app/connect/*socketId                   controllers.Application.connectApp(socketId)
 
 # Local system operations
 GET         /api/local/env                               controllers.api.Local.getEnv
@@ -29,6 +24,9 @@ GET         /api/local/open                              controllers.api.Local.o
 PUT         /api/local/create                            controllers.api.Local.createFile
 PUT         /api/local/rename                            controllers.api.Local.renameFile
 PUT         /api/local/delete                            controllers.api.Local.deleteFile
+
+# Proxy to typesafe.com
+GET         /api/proxy/*path                             controllers.api.Proxy.getTypesafe(path)
 
 # Base flow ->  Select Template -> Running Application.
 GET         /                                            controllers.Application.index

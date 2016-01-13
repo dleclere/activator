@@ -4,9 +4,9 @@ import com.typesafe.sbt.S3Plugin._
 
 object NewsHelper {
   val newsVersion = SettingKey[String]("news-version")
-  val newsFile = SettingKey[File]("snap-news-file")
-  val jsonpNewsFile = SettingKey[File]("snap-jsonp-news-file")
-  val jsonpNewsFileCreated = TaskKey[File]("snap-jsonp-news-file-created")
+  val newsFile = SettingKey[File]("activator-news-file")
+  val jsonpNewsFile = SettingKey[File]("activator-jsonp-news-file")
+  val jsonpNewsFileCreated = TaskKey[File]("activator-jsonp-news-file-created")
   val publishNews = InputKey[Unit]("publish-news")
   
   

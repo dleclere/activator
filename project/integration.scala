@@ -14,14 +14,14 @@ import com.typesafe.sbt.SbtNativePackager.Universal
 case class IntegrationTestResult(name: String, passed: Boolean, log: File)
 
 object integration {
-  
+
   val mains = TaskKey[Seq[String]]("integration-test-mains", "Discovered integration test main classes")
   val itContext = TaskKey[IntegrationContext]("integration-test-context")
   val integrationTestsWithoutOffline = taskKey[Unit]("Runs all integration tests without the offline tests")
   val tests = TaskKey[Unit]("integration-tests", "Runs all integration tests")
   val singleTest = InputKey[Seq[IntegrationTestResult]]("integration-test-only", "Runs integration tests that match the given glob")
   val integrationHome = TaskKey[File]("integration-home", "Creates the home directory for use in integration tests.")
-  
+
   def settings: Seq[Setting[_]] = makeLocalRepoSettings("install-to-it-repository") ++ Seq(
     localRepoArtifacts := Seq.empty,
     // Make sure we publish this project.
@@ -29,7 +29,7 @@ object integration {
     mains <<= compile in Compile map { a =>
       val defs = a.apis.internal.values.flatMap(_.api.definitions)
       val results = Discovery(Set("xsbti.Main"), Set())(defs.toSeq)
-      results collect { 
+      results collect {
         case (df, di) if !di.isModule && !df.modifiers.isAbstract => df.name
       }
     },
@@ -60,7 +60,7 @@ object integration {
       }
     }
   )
-  
+
   def handleResults(results: Seq[IntegrationTestResult], out: TaskStreams): Unit = {
     // TODO - Only colorize if we're in ANSI terminal.
     out.log.info(scala.Console.BLUE + " --- Integration Test Report ---" + scala.Console.BLUE_B)
@@ -85,7 +85,7 @@ object integration {
 }
 
 
-case class IntegrationContext(launchJar: File, 
+case class IntegrationContext(launchJar: File,
                                repository: File,
                                streams: TaskStreams,
                                version: String,
@@ -107,16 +107,16 @@ case class IntegrationContext(launchJar: File,
     IO createDirectory cwd
     // Here, let's create a new logger that can store logs in a location of our choosing too...
     setup(name, cwd) ! logger match {
-      case 0 => 
+      case 0 =>
         streams.log.info(" [IT] " + name + " result: SUCCESS")
         IntegrationTestResult(name, true, logFile)
-      case n => 
+      case n =>
         streams.log.error(" [IT] " + name + " result: FAILURE")
         IntegrationTestResult(name, false, logFile)
     }
   }
-  
-  
+
+
   private def cleanUriFileString(file: String): String =
 	  file.replaceAll(" ", "%20")
   private def setup(name: String, cwd: File): ProcessBuilder = {
@@ -125,16 +125,16 @@ case class IntegrationContext(launchJar: File,
     IO createDirectory (cwd / "project")
     IO.write(cwd / "project" / "build.properties", "sbt.version=" + Dependencies.sbtVersion)
     val boot = cwd / "boot"
-    Process(Seq("java", 
-        "-Dsbt.boot.properties=" + props.getAbsolutePath, 
+    Process(Seq("java",
+        "-Dsbt.boot.properties=" + props.getAbsolutePath,
         "-Dsbt.boot.directory=" + boot.getAbsolutePath,
-        "-Dactivator.integration.playVersion=" + Dependencies.playVersion,
+        "-Dactivator.integration.playVersion=" + Dependencies.play23Version,
         "-Dactivator.home=" +cleanUriFileString(integrationHome.getAbsolutePath),
-        "-jar", 
+        "-jar",
         launchJar.getAbsolutePath), cwd)
   }
-  
-  
+
+
   private def makePropertiesString(name: String, cwd: File): String =
     """|[scala]
        |  version: ${sbt.scala.version-auto}

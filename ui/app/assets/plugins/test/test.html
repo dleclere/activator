@@ -1,40 +1,55 @@
-<article class="test oneColumnAndMenu">
+<main id="wrapper" class="test">
   <nav class="menu">
     <header>
       <h1>Test</h1>
+      <div class="buttons" data-bind="tooltip: sbt.events.whyDisabled">
+        <dl class="dropdown" data-bind="css: {disabled: sbt.tasks.applicationNotReady}">
+          <dt>
+            <svg data-bind="svg: '/assets/icons/more.svg'"/>
+          </dt>
+          <dd>
+            <a data-bind="click: function(){ sbtExecCommand('test') }">Test</a>
+          </dd>
+        </dl>
+        <button data-bind="css: {disabled: sbt.tasks.applicationNotReady}, click: mainTestAction">
+          <svg data-bind="svg: '/assets/icons/test.svg'"/>
+          <span class="mainAction" data-bind="text: mainTestName"></span>
+        </button>
+      </div>
     </header>
     <div class="options">
-      <div class="buttons">
-        <span class="button start groupLeft" data-bind="click: startStopButtonClicked">
-          <span class="icon" data-bind="visible: !haveActiveTask()">&#x25b6;</span>
-          <span class="icon" data-bind="visible: haveActiveTask">&#x25a0;</span>
-          <span data-bind="text: startStopLabel"></span>
-        </span>
-        <span class="button restart groupMid" data-bind="enable: haveActiveTask() && !restartPending(), click: restartButtonClicked">Restart</span>
-      </div>
+      <ul>
+        <li>
+          <div class="switch" data-bind="switchButton: retestOnSuccessfulBuild">
+            <div class="inner"></div>
+          </div>
+          Test on build</li>
+      </ul>
     </div>
-    <ul class="list">
-      <li>
-        <input type="checkbox" data-bind="checked: rerunOnBuild" id="retestOnSuccessfulBuild" class="switch-input" />
-        <label class="switch" for="retestOnSuccessfulBuild">
-          <span class="outer">
-            <span class="inner"></span>
-          </span>
-          Test on successful build
-        </label>
-      </li>
+    <ul class="list links">
+      <li><a href="#test/results">Test results</a></li>
     </ul>
   </nav>
-  <section>
-    <header class="tallHeader">
-      <h1>Test</h1>
-      <p class="subheader">
-        <span data-bind="text: testStatus"></span> -
-        <strong data-bind="text: resultStats().passed"></strong> Passed, <strong data-bind="text: resultStats().failed"></strong> Failed
-      </p>
+  <!-- ko ifnot: results().length -->
+  <article class="plugin">
+  <div class="hint test">
+    <p>Run the tests to see the test results</p>
+  </div>
+  </article>
+  <!-- /ko -->
+  <!-- ko if: results().length -->
+  <article class="plugin">
+    <header>
+      <h1>Test results</h1>
     </header>
-    <ul class="wrapper results" data-bind="foreach: displayedResults">
-      <li data-bind="text: name, css: outcomeClass"></li>
-    </ul>
-  </section>
-</article>
+    <section>
+      <ul class="suite" data-bind="foreach: results">
+        <li data-bind="attr: {'data-status': outcome}">
+          <label data-bind="text: name"></label>
+          <p class="error" data-bind="visible: error, text: (error && error.message)"></p>
+        </li>
+      </ul>
+    </section>
+  </article>
+  <!-- /ko -->
+</main>

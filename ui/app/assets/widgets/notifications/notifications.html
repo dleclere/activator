@@ -1,9 +1,8 @@
-<dt><span data-bind="text: count"></span></dt>
-<dd>
-  <!-- ko foreach: items -->
-  <a data-bind="css: kind, text: message, attr: { href: href, title: message }"></a>
-  <!-- /ko -->
-  <!-- ko ifnot: items().length -->
-  <p>No notifications.</p>
-  <!-- /ko -->
-</dd>
+<dl id="notifications" data-bind="attr: { 'data-status': appStatus().id }">
+  <dt>
+    <span class="counter"></span>
+    <div class="sticker success"><span class="shape"><svg class="mark" data-bind="svg: '/assets/icons/success-mini.svg'"/></span></div>
+    <div class="sticker error"><span class="shape"><svg class="mark" data-bind="svg: '/assets/icons/error-mini.svg'"/></span></div>
+  </dt>
+  <dd data-bind="text: appStatus().label"></dd>
+</dl>

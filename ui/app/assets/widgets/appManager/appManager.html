@@ -1,0 +1,15 @@
+<div id="appManager">
+  <dl class="dropdown">
+    <dt data-bind="text: serverAppModel.name, attr: { title: serverAppModel.name }"></dt>
+    <dd>
+      <a class="new-app" href="/home">Manage applications</a>
+      <!-- ko foreach: serverAppModel.recentApps -->
+      <a data-bind="text: cachedName, attr: {href: '/app/'+id, title: cachedName}"></a>
+      <!-- /ko -->
+    </dd>
+  </dl>
+  <a href="#" class="home" data-bind="isExactUrl: '#'">
+    <span class="update" data-bind="visible: trp() && trp().fullUpdate">u</span>
+    <svg data-bind="svg:'/assets/icons/home.svg'"/>
+  </a>
+</div>

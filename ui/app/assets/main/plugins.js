@@ -1,59 +1,53 @@
-define(['services/build', 'main/router'], function(build, router) {
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+define(function() {
 
-  /*
-   group: logical grouping of plugins
-   groupPlugins : [
-     {
-       plugin:  the path to the plugin
-       url:     routing id
-       title:   what's presented in the list
-       panel:   if available the plugin will be shown in panel list
-     }
-   ]
-   */
-
-  // TODO : add new plugins here below and remove them from legacy router at the same time
-  //        see router.js
-  var plugins = [
-    {
-      group: 'Learn',
-      groupPlugins: [
-        {
-          plugin: 'plugins/tutorial/tutorial',
-          url: 'tutorial',
-          title: "Tutorial",
-          panel: 'Tutorial'
-        }
-      ]
-    }
-  ]
-
-  // this will basically remember last url from this plugin for next time
-  var memorizeUrl = function(fn) {
-    var routeState = {};
-
-    return function(url, breadcrumb) {
-      // We have parameters, put in cache
-      if (url.parameters.length) {
-        routeState.url = url;
-
-      // No parameters, but some in cache
-      } else if (routeState.url) {
-        url = routeState.url;
-        router.redirect(url.path);
-
-      // Nothing? Use `home`
-      } else {
-        url.parameters = [];
+  var cache = {};
+  function route(plugin, url, breadcrumb) {
+    var p;
+    if (plugin.route && url.parameters[1]){
+      p = {
+        path: url,
+        plugin: url.parameters[0],
+        pluginUrl: "plugins/" + url.parameters[0] + "/" + url.parameters[0],
+        parameters: url.parameters.slice(1)
       }
-
-      return fn(url, breadcrumb);
+      plugin.route(p, breadcrumb);
+    } else if (plugin.route){
+      p = {
+        path: url,
+        plugin: url.parameters[0],
+        pluginUrl: "plugins/" + url.parameters[0] + "/" + url.parameters[0]
+      }
+      plugin.route(p, breadcrumb);
     }
   }
 
-  // Transform the list to bind some behaviours
   return {
-    plugins: plugins,
-    memorizeUrl: memorizeUrl
+    route: function(root, callback, def) {
+      return function(url, breadcrumb) {
+        if (def && !url.parameters[0]) {
+          // Redirect to the default page
+          window.location.hash = def;
+          return;
+        }
+        var pPath = 'plugins/'+root+'/'+url.parameters[0]+'/'+url.parameters[0];
+        if (cache[pPath]){
+          callback(url, breadcrumb, cache[pPath]);
+          route(cache[pPath], url, breadcrumb);
+          return;
+        }
+        require([pPath], function(plugin) {
+          plugin.id = pPath;
+          cache[pPath] = plugin;
+          callback(url, breadcrumb, plugin);
+          route(plugin, url, breadcrumb);
+        }, function() {
+          console.log("404 TODO"); // TODO
+        });
+      }
+    }
   }
+
 });

@@ -1,23 +1,26 @@
 <div id="panelWrapper" class="tutorial-panel">
-  <!-- ko if: page -->
+  <!-- ko if: hasTutorial -->
   <nav>
-      <a class="previous" data-bind="css: {disabled: !hasPrevPage()}, click: gotoPrevPage">&#xe765;</a>
-      <a class="next" data-bind="css: {disabled: !hasNextPage()}, click: gotoNextPage">&#xe766;</a>
+      <a class="previous" data-bind="css: {disabled: noPrevPage}, click: gotoPrevPage"><svg data-bind="svg: '/assets/icons/prev.svg'" /></a>
       <dl class="dropdown">
-        <dt data-bind="text: page().title"></dt>
+        <dt data-bind="text: page()?page().title:'Select a page...'"></dt>
         <dd data-bind="foreach: table">
-            <div class="step" data-bind="click: function(){$root.gotoPage($index())}">
-              <span class="step" data-bind="text: $index"></span>
-              <span data-bind="text: $data"></span>
-            </div>
+          <a class="step" data-bind="click: function() { $root.gotoPage($index()) }">
+            <span class="step-number" data-bind="text: $index"></span>
+            <span data-bind="text: $data"></span>
+          </a>
         </dd>
+      </dl>
+      <a class="next" data-bind="css: {disabled: noNextPage}, click: gotoNextPage"><svg data-bind="svg: '/assets/icons/next.svg'" /></a>
   </nav>
-    <article class="page">
-      <section class="typo" data-bind="html: page().page, memoScroll: 'tutorialPanel'"></section>
-    </article>
+  <!-- ko if: page -->
+  <article class="page" data-bind="memoScroll: 'tutorial-pane-'+page().index">
+    <section class="typo" data-bind="html: page().page"></section>
+  </article>
+  <!-- /ko -->
   <!-- /ko -->
   <!-- ko ifnot: hasTutorial -->
-  <div id="noTutorialPannel">
+  <div id="noTutorialPanel">
     <p>No tutorial available.</p>
     <p>You can find tutorials <a href="/home">on the home page</a></p>
   </div>

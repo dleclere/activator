@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="11px" height="15px" viewBox="0 0 11 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <title>doc</title>
+    <description>Created with Sketch (http://www.bohemiancoding.com/sketch)</description>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="doc" sketch:type="MSLayerGroup">
+            <g id="Page-1" sketch:type="MSShapeGroup">
+                <path d="M0,4.03584503 L0,15 L11,15 L11,0 L4.02238234,0 L0,4.03584503 Z M2,5.03584503 L2,13 L9,13 L9,2 L5.02238234,2 L2,5.03584503 Z" id="Rectangle-1" fill="#06C5E7"></path>
+                <path d="M5.5,1.5 L5.5,5.62310553" id="Line" stroke="#06C5E7"></path>
+                <path d="M1.5,5.5 L5.5,5.5" id="Line" stroke="#06C5E7"></path>
+            </g>
+        </g>
+    </g>
+</svg>

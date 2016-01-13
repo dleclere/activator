@@ -1,0 +1,27 @@
+<article class="plugin logsPlugin">
+  <!-- ko ifnot: sbt.logs.stdout().length -->
+  <div class="hint run">
+    <p>Your app's standard out will be printed here</p>
+    <span>Run your application using the menu on the left, or type a command in the search box.</span>
+  </div>
+  <!-- /ko -->
+  <!-- ko if: sbt.logs.stdout().length -->
+  <header>
+    <h1>System</h1>
+  </header>
+  <section>
+    <div class="pluginBlock logs-wrapper dark">
+      <div class="subheader">
+        <h2>STDOUT</h2>
+        <div class="group">
+          <button data-bind="click: clear">Clear</button>
+        </div>
+      </div>
+      <div class="logs" data-bind="logScroll: memoLogsScroll, pusher: sbt.logs.stdout">
+        <!-- ko include: logsView --><!-- /ko -->
+      </div>
+      <div class="toBottom" data-bind="click: scrollToBottom, css: { hide: memoLogsScroll() == 'stick'}">⤓</div>
+    </div>
+  </section>
+  <!-- /ko -->
+</article>

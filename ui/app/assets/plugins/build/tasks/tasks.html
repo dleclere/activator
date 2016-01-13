@@ -1,0 +1,59 @@
+<article class="plugin tasks logsPlugin">
+  <header>
+    <h1>Build tasks</h1>
+  </header>
+  <section>
+    <div class="pluginBlock tasks-wrapper dark">
+      <div class="subheader">
+        <h2>Tasks</h2>
+      </div>
+      <div class="table-wrapper" data-bind="logScroll: memoTaskScroll, pusher: sbt.tasks.executions">
+        <table data-bind="foreach: sbt.tasks.executions">
+          <tr data-bind="css: { active: running, error: error, stopping: stopping }">
+            <td class="status" data-bind="click: $root.rerunTask"><span></span></td>
+            <td class="command" data-bind="text: command"></td>
+            <td class="data">
+            <!-- ko if: finished() -->
+              <!-- ko if: compilationErrors().length && (compilationErrors()[0].severity === "Error") -->
+              <span class="compilationErrors">
+                <span class="compilationErrorsNumber" data-bind="text: compilationErrors().length"></span>
+                compilation error(s)
+              </span>
+              <!-- /ko -->
+              <!-- ko if: compilationErrors().length && (compilationErrors()[0].severity === "Warn") -->
+              <span class="compilationErrors">
+                <span class="compilationErrorsNumber" data-bind="text: compilationErrors().length"></span>
+                compilation warning(s)
+              </span>
+              <!-- /ko -->
+              <!-- ko if: testResults.length -->
+              <span class="testResults">
+                <span class="testResultsNumber" data-bind="text: testResults.filter(function(t){ return t.outcome == 'passed'}).length"></span>/<span class="testResultsNumber" data-bind="text: testResults().length"></span>
+                test(s) passed
+              </span>
+              <!-- /ko -->
+            <!-- /ko -->
+            </td>
+            <td class="time" data-bind="text: time"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="pluginBlock logs-wrapper dark">
+      <div class="subheader">
+        <h2>Full output</h2>
+        <div class="group">
+          <label>
+            <input type="checkbox" data-bind="checked: sbt.app.settings.showLogDebug" />
+            Activate debug
+          </label>
+          <button data-bind="click: clear">Clear</button>
+        </div>
+      </div>
+      <div class="logs" data-bind="logScroll: memoLogsScroll, pusher: sbt.logs.logs">
+        <!-- ko include: logsView --><!-- /ko -->
+      </div>
+      <div class="toBottom" data-bind="click: scrollToBottom, css: { hide: memoLogsScroll() == 'stick'}">⤓</div>
+    </div>
+  </section>
+</article>

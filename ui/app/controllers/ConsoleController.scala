@@ -14,7 +14,7 @@ object ConsoleController extends ConsoleController {
   /**
    * Connects console websocket.
    */
-  def connectConsole(id: String) = snap.WebSocketUtil.socketCSRFCheck {
+  def connectConsole(id: String) = activator.WebSocketUtil.socketCSRFCheck {
     WebSocket.tryAccept[JsValue] { req =>
       console.ClientController.join(id).map(Right(_))
     }

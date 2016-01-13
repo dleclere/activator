@@ -25,7 +25,7 @@ object Properties {
         123456789
       case _ =>
           // our actual current generation if it's not a snapshot
-        0
+        1
     }
   }
 

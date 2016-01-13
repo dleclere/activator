@@ -3,7 +3,7 @@ import Keys._
 
 object SbtSupport {
   val sbtLaunchJarUrl = SettingKey[String]("sbt-launch-jar-url")
-  val sbtLaunchJarLocation = SettingKey[File]("sbt-launch-jar-location")  
+  val sbtLaunchJarLocation = SettingKey[File]("sbt-launch-jar-location")
   val sbtLaunchJar = TaskKey[File]("sbt-launch-jar", "Resolves SBT launch jar")
 
   def snapshotDownloadUrl(v: String) = "http://private-repo.typesafe.com/typesafe/ivy-snapshots/org.scala-sbt/sbt-launch/"+v+"/sbt-launch.jar"

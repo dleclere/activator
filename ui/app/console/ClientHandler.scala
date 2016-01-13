@@ -13,7 +13,7 @@ import activator.analytics.data.{ TimeRange, Scope }
 import activator.analytics.rest.http.SortingHelpers.{ Descending, Ascending, SortDirection }
 import akka.event.LoggingAdapter
 import com.typesafe.trace.uuid.UUID
-import snap.OutgoingMessage
+import activator.OutgoingMessage
 
 trait ClientHandlerBase extends Actor with ActorLogging with ClientModuleHandler with RequestHelpers {
   import ClientController._

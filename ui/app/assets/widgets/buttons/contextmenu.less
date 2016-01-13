@@ -1,0 +1,36 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+.contextmenu {
+  position: fixed;
+  z-index: 9999;
+  box-shadow: 0 1px 4px rgba(0,0,0,.4);
+  background: #fff;
+  border-radius: 3px;
+  &:after {
+    display: block;
+    content: " ";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    .triangle("up", 5px, white);
+  }
+  &:before {
+    display: block;
+    content: " ";
+    position: fixed;
+    .trbl(0);
+    z-index: -1;
+  }
+  a {
+    display: block;
+    padding: 0 10px;
+    color: @blue-dkr;
+    &:hover {
+      background: @blue;
+      color: #fff;
+    }
+  }
+}

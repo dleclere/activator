@@ -1,45 +1,44 @@
 /*
- Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
-*/
-@import "/public/fonts/font-faces.css";
-
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
 @import "../commons/_reset";
 @import "../commons/_base";
 
 html, body {
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
 body {
-  background: @grey;
-  color: @grey-dkr;
-  font: 13px "Open Sans", sans-serif;
+  color: @text;
+  .font();
+
   overflow: hidden;
   cursor: default;
 }
 
-button {
+a, button {
   cursor: pointer;
-  background: none;
-}
-
-h1, h2, h3, h4, h5, h6, dt {
-  .title();
+  text-decoration: none;
 }
 
 a {
-  cursor: pointer;
+  color: @blue-dkr;
 }
 
-main {
-  & > * {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    .transition(300ms);
+h1, h2, h3, h4, h5, h6, dt {
+  font-weight: 700;
+}
+header, .subheader {
+  h1, h2, h3, h4, h5, h6, dt {
+    .narrow();
+  }
+}
+
+.page {
+  section {
+    padding: 10px 20px;
   }
 }
 
@@ -90,7 +89,13 @@ a[href="#todo"], [todo] {
   }
 }
 
-@import "./_app";
-@import "../commons/_tables";
-@import "../widgets/buttons/_button";
-@import "../widgets/buttons/_dropdown";
+
+.tooltip {
+  position: fixed;
+  padding: 4px 7px;
+  z-index: 9999;
+  background: @slate-dkr;
+  color: @grey;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.3);
+}

@@ -1,0 +1,108 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+.plugin {
+  background: @grey-ltr;
+  box-shadow: -4px 0 0 rgba(0,0,0,.05), -1px 0 0 rgba(0,0,0,.1);
+  header {
+    padding: 0 20px;
+    background: @blue;
+    color: #fff;
+    line-height: 60px;
+    .row();
+    .align-items();
+    h1 {
+      .expand();
+    }
+    nav {
+      span {
+        padding: 3px 13px;
+        border: 1px solid #fff;
+        border-left-width: 0;
+        &:first-child {
+          border-left-width: 1px;
+          border-radius: 2px 0 0 2px;
+        }
+        &:last-child {
+          border-radius: 0 2px 2px 0;
+        }
+      }
+    }
+  }
+
+  .subheader {
+    background: @blue-dkr;
+    color: rgba(0,0,0,.4);
+    box-shadow: inset 0 2px 0 rgba(0,0,0,.04);
+    height: 34px;
+    line-height: 34px;
+    padding: 0 20px;
+  }
+
+  footer {
+    .order();
+    g {
+      fill: @yellow-text;
+    }
+    white-space: nowrap;
+    height: 35px;
+    line-height: 33px;
+    background: @yellow;
+    color: @yellow-text;
+    border-top: 1px solid @yellow-dkr;
+    font-size: 12px;
+    z-index: 5;
+    & > * {
+      float: left;
+      padding: 0 10px;
+      border-right: 1px solid @yellow-dkr;
+    }
+    .dropdown {
+      padding: 0;
+      height: 34px;
+      width: 34px;
+      dt {
+        height: inherit;
+        width: inherit;
+        text-align: center;
+      }
+      dd {
+        padding: 10px;
+      }
+      svg {
+        margin-top: 8px;
+      }
+    }
+    select {
+      max-width: 100px;
+    }
+    .groupRight {
+      float: right;
+      & > * {
+        float: left;
+        padding: 0 10px;
+        border-left: 1px solid @yellow-dkr;
+      }
+    }
+  }
+
+  section {
+    .expand();
+    overflow: auto;
+    > .page {
+      padding: 10px 20px;
+    }
+  }
+  .sub + section {
+    .trbl(100px, 0 0 0);
+  }
+
+}
+
+.emptyList {
+  padding: 20px;
+  text-align: center;
+  font-size: 17px;
+}

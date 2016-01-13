@@ -1,0 +1,158 @@
+<section id="new">
+
+  <nav class="tabs">
+    <h2>Templates</h2>
+    <a data-bind="click: showTemplates, css: {active: openedTab() == 'templates'}">Tutorials</a>
+    <a data-bind="click: showSeeds, css: {active: openedTab() == 'seed'}">Seeds</a>
+    <a data-bind="click: showTrp, css: {active: openedTab() == 'trp'}">Reactive Platform</a>
+  </nav>
+
+  <div id="templatesList" class="half">
+
+    <article id="templateList">
+      <h2>Create a new app</h2>
+      <aside id="filter">
+        <span class="clear" data-bind="click: clearSearch">×</span>
+        <input type="text" placeholder="Filter templates" data-bind="value: filterValue, event: {  keyup: search, change: search }" />
+      </aside>
+      <ul class="list" data-bind="foreach: filteredTemplates, visible: openedTab() == 'templates'">
+        <li class="template" data-bind="css: {featured: featured, active: $root.currentAppId() == id}, click: $root.chooseTemplate">
+          <input type="radio" name="template" data-bind="value: id">
+          <span data-bind="text: title"></span>
+          <ul class="tags" data-bind="foreach: tags">
+            <li data-bind="text: $data, click: $root.clickTemplate"></li>
+          </ul>
+        </li>
+      </ul>
+
+      <ul class="list" data-bind="foreach: filteredSeeds, visible: openedTab() == 'seed'">
+        <li class="template" data-bind="css: {featured: featured, active: $root.currentAppId() == id}, click: $root.chooseTemplate">
+          <input type="radio" name="template" data-bind="value: id">
+          <span data-bind="text: title"></span>
+          <ul class="tags" data-bind="foreach: tags">
+            <li data-bind="text: $data"></li>
+          </ul>
+        </li>
+      </ul>
+
+      <ul class="list" data-bind="foreach: filteredTrp, visible: openedTab() == 'trp'">
+        <li class="template certified" data-bind="css: {featured: featured, active: $root.currentAppId() == id}, click: $root.chooseTemplate">
+          <input type="radio" name="template" data-bind="value: id">
+          <span data-bind="text: title"></span>
+          <ul class="tags" data-bind="foreach: tags">
+            <li data-bind="text: $data"></li>
+          </ul>
+        </li>
+      </ul>
+
+      <!-- ko if: !trpInfoSeen() && openedTab() == 'trp' -->
+        <div id="trpLicense"><div>
+          <h1>Typesafe Reactive Platform</h1>
+          <p>Templates on this tab use the <a href="http://typesafe.com/products/typesafe-reactive-platform" target="_blank">Typesafe Reactive Platform</a>.
+             To compile them you'll need a free trial subscription, and for production deployment you'll need a paid subscription.</p>
+          <p style="text-align: center">
+            <button class="button" data-bind="click: acceptTrp">Got it!</button>
+          </p>
+        </div></div>
+      <!-- /ko -->
+
+    </article>
+
+  </div>
+
+  <!-- ko if:currentApp -->
+  <div id="viewTemplate" class="half right" data-bind="with: currentApp">
+    <div class="template">
+      <span class="clear" data-bind="click: $root.closeTemplate">×</span>
+      <h3 data-bind="text: title"></h3>
+      <ul class="tags" data-bind="foreach: tags">
+        <li data-bind="click: $root.searchTag, text: $data"></li>
+      </ul>
+      <p data-bind="markdownLinkify: description"></p>
+      <div class="author">
+        <p><cite>by <span data-bind="text: authorName"></span>
+          <!-- ko if:authorTwitter -->
+            (<a target="_blank" data-bind="attr: { href: 'http://twitter.com/' + authorTwitter }, text: authorTwitter"></a>)
+          <!--  /ko -->
+          </cite></p>
+        <p><a target="_blank" data-bind="attr: { href: sourceLink }, text: sourceLink" class="source"></a></p>
+      </div>
+      <!-- ko if: authorName && authorBio && authorLogo -->
+      <div class="promote partner">
+        <img data-bind="attr: { src: authorLogo }">
+        <h4 data-bind="text: authorName"></h4>
+        <p data-bind="markdownLinkify: authorBio"></p>
+      </div>
+      <!-- /ko -->
+    </div>
+    <form id="newApp" data-bind="submit: $root.newAppFormSubmit">
+      <h4>Create an app from this template</h4>
+      <input type="hidden" name="template-name" data-bind="value: id">
+      <input type="hidden" name="template" data-bind="value: id">
+      <input type="hidden" id="appName" name="name" data-bind="value: name">
+      <p>
+        <a id="browseAppLocation" data-bind="click: $root.clickBrowseAppLocation"></a>
+      <input type="text" id="newappLocation" name="location" data-bind="value: $root.lastFolder() + separator + name">
+      </p>
+      <div class="select">
+        <input type="submit" class="button" value="Create app" id="newButton">
+      </div>
+    </form>
+  </div>
+  <!-- /ko -->
+
+  <!-- ko ifnot:currentApp -->
+  <div class="welcome half right">
+    <!-- ko if: openedTab() == 'templates' -->
+      <h3>Activator tutorials</h3>
+      <p>You will be learning and writing code in seconds...</p>
+      <ol class="steps">
+        <li>Choose a template</li>
+        <li>Specify a location</li>
+        <li>Activate it!</li>
+      </ol>
+      <h4>Filter tutorials by tags:</h4>
+      <ul class="inspiration tags" data-bind="foreach: tags">
+        <li data-bind="click: $root.searchTag, text: $data"></li>
+      </ul>
+    <!-- /ko -->
+    <!-- ko if: openedTab() == 'seed' -->
+      <h3>Activator seeds</h3>
+      <p>Seeds are boilerplates projects.</p>
+      <ol class="steps">
+        <li>Choose a seed</li>
+        <li>Specify a location</li>
+        <li>Activate it!</li>
+      </ol>
+      <h4>Filter seeds templates by tags:</h4>
+      <ul class="inspiration tags" data-bind="foreach: tags">
+        <li data-bind="click: $root.searchSeedTag, text: $data"></li>
+      </ul>
+    <!-- /ko -->
+    <!-- ko if: openedTab() == 'trp' -->
+      <h3>Typesafe Reactive Platform</h3>
+      <p>Use certified builds from Typesafe.</p>
+      <ol class="steps">
+        <li>Choose a project</li>
+        <li>Specify a location</li>
+        <li>Activate it!</li>
+      </ol>
+      <h4>Filter Reactive Platform templates by tags:</h4>
+      <ul class="inspiration tags" data-bind="foreach: tags">
+        <li data-bind="click: $root.searchTrpTag, text: $data"></li>
+      </ul>
+    <!-- /ko -->
+  </div>
+  <!-- /ko -->
+
+  <div id="newAppLocationBrowser" class="subsection hidden">
+    <header>
+      <span class="close" data-bind="click: $root.closeNewBrowser">×</span>
+      <h2>Choose a destination</h2>
+    </header>
+    <div class="list">
+      <!-- ko include: fs.render.bind(fs)() --><!-- /ko -->
+    </div>
+  </div>
+
+</section>

@@ -1,0 +1,114 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+#notifications {
+  .row();
+  height: 50px;
+  border-left: 2px solid @slate-dkr;
+  .counter {
+    display: inline-block;
+    .square(30px);
+    line-height: 25px;
+    border-radius: 15px;
+    border: 3px solid @grey-dkr;
+    font-size: 16px;
+    margin: 11px;
+    &.glow {
+      border-color: @red;
+    }
+  }
+  dd {
+    .order(1);
+    line-height: 50px;
+    color: @grey;
+    .ellipsis();
+    max-width: 0;
+    .transition();
+    padding-left: 0;
+
+  }
+  dt {
+    .order(2);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .success, .error {
+    top: 16px;
+    left: 16px;
+    width: 20px;
+    height: 20px;
+    .shape {
+      padding: 1px;
+      g {
+        fill: white;
+      }
+    }
+  }
+  .success {
+    .shape {
+      background: @blue;
+    }
+  }
+  .error {
+    .shape {
+      background: @red;
+    }
+  }
+
+  &[data-status=ok] {
+    &:hover dd {
+      max-width: 200px;
+      padding-left: 10px;
+    }
+  }
+
+  &[data-status=activity] dd,
+  &[data-status=buildFailed] dd,
+  &[data-status=testFailed] dd,
+  &[data-status=compilationError] dd,
+  &[data-status=disconnected]  dd {
+    max-width: 200px;
+    padding-left: 10px;
+  }
+
+
+  &[data-status=buildFailed] {
+    background: @red;
+    .counter {
+      color: #fff;
+      border-color: #fff;
+    }
+    dd {
+      color: #fff;
+    }
+  }
+  &[data-status=activity] {
+    .counter {
+      border-color: @blue;
+    }
+  }
+  &[data-status=testFailed] {
+    .counter {
+      border-color: @red;
+    }
+  }
+  &[data-status=compilationError] {
+    .counter {
+      background: @red;
+      border-color: #fff;
+    }
+  }
+  &[data-status=disconnected] {
+    .counter {
+      background: url(/assets/icons/bolt.svg) center center no-repeat;
+      border-color: @blue;
+    }
+    dd {
+      color: @grey;
+    }
+  }
+
+}

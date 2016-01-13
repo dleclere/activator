@@ -19,9 +19,9 @@ define(['services/log','text!./log.html', 'commons/widget', 'commons/utils'], fu
       // this subscription would need cleanup if we ever have
       // a LogView which can be destroyed.
       this.log.scrollFreeze.subscribe(function(newCount) {
-        if (newCount == 1) {
+        if (newCount === 1) {
           self.savedScrollState = self.findScrollState();
-        } else if (newCount == 0 && self.savedScrollState !== null) {
+        } else if (newCount === 0 && self.savedScrollState !== null) {
           self.applyScrollState(self.savedScrollState);
           self.savedScrollState = null;
         }
@@ -49,7 +49,7 @@ define(['services/log','text!./log.html', 'commons/widget', 'commons/utils'], fu
         var i = 0;
         for (; i < parents.length; ++i) {
           var scrollMode = $(parents[i]).css('overflowY');
-          if (scrollMode == 'auto' || scrollMode == 'scroll') {
+          if (scrollMode === 'auto' || scrollMode === 'scroll') {
             element = parents[i];
             break;
           }

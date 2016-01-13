@@ -26,16 +26,18 @@ object ClientModuleHandler {
   case object DeviationModule extends Handler("deviation")
   case object LifecycleModule extends Handler("lifecycle")
 
-  def fromString(in: String): Option[Handler] = in match {
-    case "overview" => Some(OverviewModule)
-    case "actors" => Some(ActorsModule)
-    case "actor" => Some(ActorModule)
-    case "requests" => Some(RequestsModule)
-    case "request" => Some(RequestModule)
-    case "deviations" => Some(DeviationsModule)
-    case "deviation" => Some(DeviationModule)
-    case "lifecycle" => Some(LifecycleModule)
-    case _ => None
+  def fromString(in: String): Option[Handler] = {
+    in match {
+      case "overview" => Some(OverviewModule)
+      case "actors" => Some(ActorsModule)
+      case "actor" => Some(ActorModule)
+      case "requests" => Some(RequestsModule)
+      case "request" => Some(RequestModule)
+      case "deviations" => Some(DeviationsModule)
+      case "deviation" => Some(DeviationModule)
+      case "lifecycle" => Some(LifecycleModule)
+      case _ => None
+    }
   }
 
   // Add the name of handlers that should only be invoked once to this collection

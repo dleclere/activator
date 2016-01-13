@@ -55,12 +55,12 @@ require([
       failedCount += 1;
     }
     results.push(r);
-    var node = $('.results')[0];
+    var node = $('.results')[0], elem;
     if (r.passed) {
-      var elem = $('<div class="passed"></div>').text(r.desc + ": OK");
+      elem = $('<div class="passed"></div>').text(r.desc + ": OK");
       $(node).append(elem);
     } else {
-      var elem = $('<div class="failed"></div>').text(r.desc + ": FAILED: " + r.error)
+      elem = $('<div class="failed"></div>').text(r.desc + ": FAILED: " + r.error)
       $(node).append(elem);
     }
 
@@ -69,7 +69,7 @@ require([
 
   function afterTests() {
     var overall;
-    if (failedCount == 0)
+    if (failedCount === 0)
       overall = "All tests passed!";
     else
       overall = "YOU HAVE FAILED";
@@ -79,7 +79,7 @@ require([
   /* TESTS FOLLOW */
 
   test("Class utilities", function() {
-    Class = utils.Class;
+    var Class = utils.Class;
 
     var B = Class({
       init: function(a,b) {
@@ -127,25 +127,25 @@ require([
     var s1 = new S1(3,4);
     var s2 = new S2(5,6);
 
-    assert(b.name == "B");
-    assert(b.a == 1);
-    assert(b.b == 2);
-    assert(b.foo() == "B");
-    assert(b.count == 1);
+    assert(b.name === "B");
+    assert(b.a === 1);
+    assert(b.b === 2);
+    assert(b.foo() === "B");
+    assert(b.count === 1);
 
-    assert(s1.name == "S1");
-    assert(s1.a1 == 3);
-    assert(s1.b1 == 4);
-    assert(s1.foo() == "S1");
-    assert(s1.count == 2);
-    assert(s1.classValue == 42);
+    assert(s1.name === "S1");
+    assert(s1.a1 === 3);
+    assert(s1.b1 === 4);
+    assert(s1.foo() === "S1");
+    assert(s1.count === 2);
+    assert(s1.classValue === 42);
 
-    assert(s2.name == "S2");
-    assert(s2.a2 == 5);
-    assert(s2.b2 == 6);
-    assert(s2.foo() == "S2");
-    assert(s2.count == 3);
-    assert(s2.classValue == 43);
+    assert(s2.name === "S2");
+    assert(s2.a2 === 5);
+    assert(s2.b2 === 6);
+    assert(s2.foo() === "S2");
+    assert(s2.count === 3);
+    assert(s2.classValue === 43);
   });
 
   /* END OF TESTS */

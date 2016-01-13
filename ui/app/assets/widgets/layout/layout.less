@@ -1,26 +1,40 @@
 /*
- Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
  */
 @import "../../commons/_base";
 
+// ----------------
+// LAYOUT
+// ----------------
+
 // Defaults
-#main {
+#app {
+  position: absolute;
+  top: @header-banner-closed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  .transition();
+}
+
+#wrapper {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-}
-
-#wrapper {
-  position: fixed;
-  top: 50px;
-  right: 0;
-  bottom: 0;
-  left: 0;
   overflow: hidden;
-  -webkit-perspective: 2000;
-  .transition();
+  .row();
+  > nav {
+    width: @menu-width;
+  }
+  > div, > article {
+    .expand();
+    .column();
+    width: 800px; // Default value for IE11
+    position: relative;
+    z-index: 1;
+  }
 }
 
 #header {
@@ -33,7 +47,25 @@
   position: fixed;
   bottom: 0;
   right: 0;
-  display: none;
+  .transition();
+  [data-shape='right1'] &,
+  [data-shape='right2'] & {
+      top: 50px;
+      -webkit-transform: translateX(100%);
+      -moz-transform: translateX(100%);
+      transform: translateX(100%);
+  }
+  [data-shape='bottom1'] &,
+  [data-shape='bottom2'] & {
+    left: 0;
+    -webkit-transform: translateY(100%);
+    -moz-transform: translateY(100%);
+    transform: translateY(100%);
+  }
+  [data-shape^='bottom'].navigation-opened & {
+    left: @drawer-width;
+  }
+
 }
 
 #navigation {
@@ -43,60 +75,64 @@
   .transition();
 }
 
-// Navigation opened
-body.navigationOpened {
-  #header, #wrapper {
-    left: @drawer-width;
-  }
-  #navigation {
-    -webkit-transform: translateX(0);
-    -moz-transform: translateX(0);
-    transform: translateX(0);
-  }
+#banner {
+  -webkit-transform: translateY(-100%);
+  -moz-transform: translateY(-100%);
+  transform: translateY(-100%);
+  .transition();
 }
-body.navigationSneak {
-  #navigation {
-    -webkit-transform: translateX(0);
-    -moz-transform: translateX(0);
-    transform: translateX(0);
+
+// Banner opened
+body.banner-opened {
+  #app {
+    top: @header-banner-opened;
+  }
+  #banner {
+    -webkit-transform: none;
+    -moz-transform: none;
+    transform: none;
   }
 }
 
-// Panel opened
-body.panelOpened {
-  #panels {
-    display: block;
+// Navigation opened
+body.navigation-opened {
+  #header, #app {
+    left: @drawer-width;
   }
+  #navigation {
+    -webkit-transform: none;
+    -moz-transform: none;
+    transform: none;
+  }
+}
+body.navigation-sneak {
+  #navigation {
+    -webkit-transform: none;
+    -moz-transform: none;
+    transform: none;
+    z-index: 98;
+  }
+}
+
+// panel opened
+body.panel-opened {
   &[data-shape='right1'],
   &[data-shape='right2'] {
-    #header, #wrapper {
-      right: @panel-width;
-    }
     #panels {
-      top: 0;
-      width: @panel-width;
-    }
-    main {
-      left: @panel-width;
+      -webkit-transform: none;
+      -moz-transform: none;
+      transform: none;
     }
   }
   &[data-shape='bottom1'],
   &[data-shape='bottom2'] {
     #panels {
-      height: @panel-width;
-      left: 0;
-    }
-    &.navigationOpened {
-      #panels {
-        left: @drawer-width;
-      }
-    }
-    #wrapper {
-      bottom: @panel-width;
+      -webkit-transform: none;
+      -moz-transform: none;
+      transform: none;
     }
   }
 }
-
 
 .modal {
   position: fixed;
@@ -105,32 +141,4 @@ body.panelOpened {
   left: 0;
   bottom: 0;
   right: 0;
-}
-
-
-.oneColumn {
-  > div, > section {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 1px;
-  }
-}
-
-.oneColumnAndMenu {
-  > nav {
-    width: @menu-width;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-  }
-  > div, > section {
-    position: absolute;
-    top: 0;
-    left: @menu-width;
-    bottom: 0;
-    right: 1px;
-  }
 }

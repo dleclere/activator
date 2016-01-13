@@ -1,34 +1,85 @@
-<article class="oneColumnAndMenu tutorial">
+<main id="wrapper" class="tutorial">
   <!-- ko if: hasTutorial -->
-  <nav class="menu" data-bind="memoScroll: 'tutorialMenu'">
+  <nav class="menu">
     <header>
       <h1>Tutorial</h1>
-      <div class="nextPrev">
-        <button class="prev" data-bind="click: gotoPrevPage, css: {disabled: !hasPrevPage()}"></button><button class="next" data-bind="click: gotoNextPage, css: {disabled: !hasNextPage()}"></button>
+      <div class="buttons">
+        <button class="prev" data-bind="click: gotoPrevPage, css: {disabled: noPrevPage}">
+          <svg data-bind="svg: '/assets/icons/prev.svg'" />
+        </button>
+        <button class="next" data-bind="click: gotoNextPage, css: {disabled: noNextPage}">
+          <svg data-bind="svg: '/assets/icons/next.svg'" />
+        </button>
+        <!-- ko if: isLocal -->
+          <button data-bind="click: loadTutorial">
+            Reload
+          </button>
+        <!-- /ko -->
       </div>
     </header>
-    <div class="list links">
-      <ul data-bind="foreach: table">
-        <li data-bind="isActiveUrl: '#tutorial/' + $index()">
-          <a data-bind="href: '#tutorial/' + $index(), text: $data"></a>
-        </li>
-      </ul>
-    </div>
+    <ul class="list links" data-bind="foreach: table, memoScroll: 'tutorial-index'">
+      <li data-bind="isActiveUrl: '#tutorial/'+$index()">
+        <a data-bind="href: '#tutorial/'+$index(), text: $data"></a>
+      </li>
+    </ul>
   </nav>
+  <!-- ko ifnot: page() -->
+  <article class="plugin">
+    <div class="intro typo stack">
+      <!-- ko if: metaData() -->
+        <div class="description">
+          <h1 data-bind="text: metaData().title"></h1>
+          <p data-bind="markdownLinkify: metaData().description"></p>
+          <p class="author">
+            <cite>
+              by <span data-bind="text: metaData().authorName"></span>
+              <!-- ko if: metaData().authorTwitter -->
+              (<a target="_blank" data-bind="text: '@'+metaData().authorTwitter, href: 'http://twitter.com/'+metaData().authorTwitter"></a>)
+              <!-- /ko -->
+            </cite>
+            <!-- ko if: metaData().sourceLink -->
+            - <a target="_blank" class="source" data-bind="text: metaData().sourceLink, href: metaData().sourceLink"></a>
+            <!-- /ko -->
+          </p>
+        </div>
+        <!-- ko if: (metaData().authorLink && metaData().authorBio && metaData().authorName) -->
+        <div class="training">
+          <a target="_blank" data-bind="href: metaData().authorLink">
+            <!-- ko if: metaData().authorLogo -->
+            <img data-bind="attr: {src: metaData().authorLogo}">
+            <!-- /ko -->
+            <h3 data-bind="text: metaData().authorName"></h3>
+          </a>
+          <p data-bind="markdownLinkify: metaData().authorBio"></p>
+        </div>
+        <!-- /ko -->
+      <!-- /ko -->
+      <!-- ko ifnot: metaData() -->
+        <div class="description">
+          <h1>Tutorial</h1>
+          <p>No descrption for this tutorial.</p>
+          <!-- ko if: isLocal -->
+            <p>Please note that descriptions are loaded from Typesafe server, hence are not available in local tutorial development</p>
+          <!-- /ko -->
+        </div>
+      <!-- /ko -->
+    </div>
+  </article>
   <!-- /ko -->
-  <!-- ko if: page -->
-  <section>
+  <!-- ko if: page() -->
+  <article class="plugin">
     <header>
       <h1 data-bind="text: page().title"></h1>
     </header>
-    <article class="page typo wrapper" data-bind="html: page().page, memoScroll: 'tutorialPage'+page().title">
-    </article>
-  </section>
+    <section class="typo page" data-bind="html: page().page, memoScroll: 'tutorial-'+page().index">
+    </section>
+  </article>
+  <!-- /ko -->
   <!-- /ko -->
   <!-- ko ifnot: hasTutorial -->
-  <div id="noTutorial">
+  <div class="hint no-data">
     <p>No tutorial available.</p>
     <p>You can find tutorials <a href="/home">on the home page</a></p>
   </div>
   <!-- /ko -->
-</article>
+</main>

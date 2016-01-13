@@ -9,16 +9,15 @@ import play.api.libs.json._
 import play.filters.csrf._
 import activator._
 import activator.cache.TemplateMetadata
-import scala.concurrent.duration._
 import scala.concurrent.Future
 import scala.util.control.NonFatal
+import scala.concurrent.duration._
+import akka.util._
 
 object Templates extends Controller {
-  // This will load our template cache and ensure all templates are available for the demo.
-  // We should think of an alternative means of loading this in the future.
-  // TODO - We should load timeout from configuration.
-  implicit val timeout = akka.util.Timeout(Duration(12, SECONDS))
-  val templateCache = activator.UICacheHelper.makeDefaultCache(snap.Akka.system)
+  implicit val timeout: Timeout = 5.minutes
+
+  val templateCache = activator.UICacheHelper.makeDefaultCache(activator.Akka.system)
 
   // Here's the JSON rendering of template metadata.
   implicit object Protocol extends Format[TemplateMetadata] {
@@ -47,6 +46,16 @@ object Templates extends Controller {
   def list = Action.async { request =>
     import concurrent.ExecutionContext.Implicits._
     templateCache.metadata map { m => Ok(Json toJson m) }
+  }
+
+  def meta(templateId: String) = Action.async { request =>
+    import concurrent.ExecutionContext.Implicits._
+    templateCache.template(templateId) map { t =>
+      t match {
+        case Some(m) => Ok(Json.toJson(m.metadata))
+        case _ => NotFound
+      }
+    }
   }
 
   def tutorial(id: String, location: String) = Action.async { request =>

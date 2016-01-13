@@ -1,0 +1,102 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+#appManager {
+  background: @red;
+  line-height: 50px;
+  height: 50px;
+  .row();
+  .home {
+    border: 1px solid @red-dkr;
+    width: 35px;
+    padding-top: 2px;
+    .transition();
+    g {
+      fill: #F6ACAC;
+    }
+    &:hover, &.active {
+      background: #F6ACAC;
+      g {
+        fill: #fff;
+      }
+    }
+    .update {
+      display: block;
+      width: 12px;
+      height: 12px;
+      border-radius: 10px;
+      background: @slate;
+      position: absolute;
+      top: 10px;
+      right: 4px;
+      line-height: 12px;
+      font-size: 10px;
+      text-align: center;
+    }
+  }
+  dl {
+    .expand();
+  }
+  dt, dd {
+    color: #fff;
+    cursor: pointer;
+    .ellipsis();
+  }
+  dt {
+    background: url('/assets/images/select.svg') 10px 27px no-repeat, url('/assets/images/select.svg') 10px -22px no-repeat;
+    .transition();
+    padding: 0 10px 0 28px;
+    height: 50px;
+  }
+  dd {
+    background: @red-dkr;
+    line-height: 35px;
+    max-height: 320px;
+    width: @drawer-width;
+    overflow: auto;
+  }
+  dl:hover dt {
+    background-position: 10px 32px, 10px -27px;
+  }
+  a {
+    display: block;
+    border-top: 1px solid @red;
+    padding: 0 10px;
+    text-decoration: none;
+    color: #fff;
+    .ellipsis();
+    &:hover {
+      background: #fff;
+      color: @red;
+    }
+  }
+  .new-app {
+    margin: 5px;
+    border: 0;
+    color: @red;
+    background: #fff;
+    text-align: center;
+    border-radius: 2px;
+    &:hover {
+      color: @red-dkr;
+    }
+  }
+  button {
+    display: block;
+    background: #fff;
+    color: @red;
+    width: 90%;
+    margin: 8px auto;
+    height: 32px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 2px;
+    &:hover {
+      color: @red-dkr;
+    }
+  }
+}
+

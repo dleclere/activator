@@ -1,0 +1,52 @@
+<main id="wrapper" class="build">
+  <nav class="menu">
+    <header>
+      <h1>Build</h1>
+      <div class="buttons" data-bind="tooltip: sbt.events.whyDisabled">
+        <dl class="dropdown" data-bind="css: {disabled: sbt.tasks.applicationNotReady}">
+          <dt>
+            <svg data-bind="svg: '/assets/icons/more.svg'"/>
+          </dt>
+          <dd>
+            <a data-bind="click: function(){ sbtExecCommand('compile') }">Compile</a>
+            <a data-bind="click: function(){ sbtExecCommand('reload') }">Reload</a>
+            <a data-bind="click: function(){ sbtExecCommand('clean') }">Clean</a>
+          </dd>
+        </dl>
+        <button data-bind="css: {disabled: sbt.tasks.applicationNotReady}, click: mainBuildAction">
+          <svg data-bind="svg: '/assets/icons/build.svg'"/>
+          <span class="mainAction" data-bind="text: mainBuildName"></span>
+        </button>
+      </div>
+    </header>
+    <div class="options">
+      <ul>
+        <li>
+          <div class="switch" data-bind="switchButton: recompileOnChange">
+            <div class="inner"></div>
+          </div>
+          Compile on file change
+        </li>
+      </ul>
+    </div>
+    <ul class="list links">
+      <li data-bind="isActiveUrl: '#build/tasks'">
+        <a href="#build/tasks">Tasks</a>
+      </li>
+      <!--
+      <li data-bind="isActiveUrl: '#build/console'">
+        <a href="#build/console">Scala console</a>
+      </li>
+      <li data-bind="isActiveUrl: '#build/dependencies'">
+        <a href="#build/dependencies">Dependencies</a>
+      </li>
+      <li data-bind="isActiveUrl: '#build/configuration'">
+        <a href="#build/configuration">Project configuration</a>
+      </li>
+      -->
+    </ul>
+  </nav>
+  <!-- ko if: subPlugin() -->
+    <!-- ko include: subPlugin --><!-- /ko -->
+  <!-- /ko -->
+</main>

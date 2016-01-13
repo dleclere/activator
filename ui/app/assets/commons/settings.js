@@ -1,3 +1,6 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
 define(function() {
 
   var all = {};
@@ -25,6 +28,6 @@ define(function() {
         throw "Settings observable should be declared only once.";
       }
     }
-  }
+  };
 
 });

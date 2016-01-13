@@ -2,17 +2,22 @@
 
 @import activator.properties.ActivatorProperties
 @import play.api.libs.json.Json
-@import snap.WebSocketUtil.webSocketURLWithCSRF
+@import activator.WebSocketUtil.webSocketURLWithCSRF
 
-@name(app: snap.AppConfig) = {
+@import play.api.libs.json.JsString
+@import java.io.File
+
+@name(app: activator.AppConfig) = {
   @app.cachedName.getOrElse(app.id)
 }
-@className(app: snap.AppConfig) = {@if(app.cachedName.getOrElse(app.id) == model.name) {default} else {}}
+@className(app: activator.AppConfig) = {@if(app.cachedName.getOrElse(app.id) == model.name) {default} else {}}
 
 <!-- Copyright (C) 2013 Typesafe, Inc <http://typesafe.com> -->
+<!DOCTYPE html>
 <html>
   <head>
     <title>Typesafe Activator</title>
+    <link rel="icon" type="image/png" href="@routes.Assets.at("favicon.ico")" />
     <link href="@routes.Assets.at("main/main.css")" rel="stylesheet" type="text/css">
     <!--[if lt IE 9]>
     <script src='@routes.Assets.at("commons/ie.js")' type='text/javascript'></script>
@@ -20,7 +25,8 @@
     <script type="text/javascript">
       // put ?debug in your query string to enable debug mode
       window.debug = (location.search.indexOf("debug") >= 0);
-      window.wsUrl = '@webSocketURLWithCSRF(routes.Application.connectApp(model.id))';
+      window.separator = @Html(JsString(File.separator).toString())
+      window.wsUrl = '@webSocketURLWithCSRF(routes.Application.connectApp(model.socketId))';
       window.consoleWsUrl = '@webSocketURLWithCSRF(routes.ConsoleController.connectConsole(model.id))';
       @* The @Html thing prevents the Json from being escaped *@
       window.serverAppModel = @Html(Json.toJson(model).toString())
@@ -28,6 +34,30 @@
     </script>
     <script data-main="@routes.Assets.at("main/main.js")" type="text/javascript" src="@routes.Assets.at("lib/requirejs/require.js")"></script>
   </head>
-  <body data-bind="css: {navigationOpened: navigation.navigationOpened, navigationSneak: navigation.sneak, panelOpened: panel.panelOpened}, attr: { 'data-shape': panel.panelShape }">
+  <body style="background: #97ABB8;">
+
+  <script type="text/html" id="nodetemplate">
+    <li data-bind="css: {directory: isDirectory, hiddenNode: isHidden, open: isOpened}, isExactUrl: '#code'+url">
+      <!-- ko if: isDirectory -->
+      <span data-bind="text: name, click: toggleOpen, contextmenu: contextmenu"></span>
+      <ul data-bind="template: { name: 'nodetemplate', foreach: children }">
+      </ul>
+      <!-- /ko -->
+      <!-- ko ifnot: isDirectory -->
+      <span data-bind="text: name, click: openFile, contextmenu: contextmenu"></span>
+      <!-- /ko -->
+    </li>
+  </script>
+
+  <script id="missingProperties" type="text/html">
+    <p>This <i>Reactive Platform</i> project needs a <span class='properties-filename'>typesafe.properties</span> file, click <button class="button" data-bind='click: remedy'>here</button> to add one</p>
+  </script>
+  <script id="missingId" type="text/html">
+    <p>This <i>Reactive Platform</i> project is using an invalid Typesafe subscription ID. Click <button class="button" data-bind='click: remedy'>here</button> to fix.</p>
+  </script>
+  <script id="noError" type="text/html">
+    <p></p>
+  </script>
+
   </body>
 </html>

@@ -1,0 +1,64 @@
+<main id="wrapper" class="code">
+  <!-- ko include: browser.render() --><!-- /ko -->
+  <!-- ko ifnot: visible -->
+  <article class="plugin">
+  <div class="hint code">
+    <p>Browse your app's code</p>
+    <span>You can also open it in your favorite editor the same way</span>
+    <p>
+      <button data-bind="click: openInEclipse">Create Eclipse project</button>
+      <button data-bind="click: openInIdea">Create IntelliJ project</button>
+    </p>
+  </div>
+  </article>
+  <!-- /ko -->
+  <!-- ko if: visible -->
+    <div class="editorWrapper">
+      <header>
+        <dl class="code-options dropdown">
+          <dt><svg data-bind="svg: '/assets/icons/gear-mini.svg'"/></dt>
+          <dd class="prevent">
+            <a data-bind="click: closeAll">Close all</a>
+            <a data-bind="click: saveAll">Save all</a>
+
+            <p>
+              <label><input type="checkbox" data-bind="checked: autoSave"> Auto-save</label>
+            </p>
+
+            <p>
+              <label>
+                Theme:
+                <select data-bind="options: editor.themes, value: editor.chosenTheme"></select>
+              </label>
+            </p>
+            <p>
+              <label>
+              Font size
+              <select data-bind="options: editor.fontSizes, value: editor.chosenFontSize"></select>
+              </label>
+            </p>
+          </dd>
+        </dl>
+        <ul class="tabs" data-bind="foreach: openedDocuments">
+          <li data-bind="css: {active: active}, click: $root.makeActive, contextmenu: contextmenu, attr: {title: location}">
+            <button class="close" data-bind="click: $root.closeFile"></button>
+            <span class="name" data-bind="text: title"></span>
+            <span class="edited" data-bind="visible: edited">*</span>
+          </li>
+        </ul>
+      </header>
+      <!-- ko if: selectedDocument -->
+        <!-- ko if: selectedDocument().isText -->
+          <!-- ko include: editor.render() --><!-- /ko -->
+        <!-- /ko -->
+        <!-- ko ifnot: selectedDocument().isText -->
+          <div class="bin-file">
+            <div class="hint no-data">
+              <p>We cannot display this content</p>
+            </div>
+          </div>
+        <!-- /ko -->
+      <!-- /ko -->
+    </div>
+  <!-- /ko -->
+</main>

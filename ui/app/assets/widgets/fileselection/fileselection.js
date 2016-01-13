@@ -1,7 +1,15 @@
 /*
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
-define(['css!./fileselection.css', 'text!./fileselection.html', 'lib/knockout/knockout', 'commons/widget', 'commons/utils'], function(css, template, ko, Widget, utils) {
+define([
+  'commons/utils',
+  'text!./fileselection.html',
+  'css!./fileselection.css'
+], function(
+  utils,
+  tpl,
+  css
+) {
 
   function browse(location) {
     return $.ajax({
@@ -12,15 +20,15 @@ define(['css!./fileselection.css', 'text!./fileselection.html', 'lib/knockout/kn
         location: location
       }
     });
-  };
+  }
 
   function browseRoots() {
     return $.ajax({
-        url: '/api/local/browseRoots',
-        type: 'GET',
-        dataType: 'json'
+      url: '/api/local/browseRoots',
+      type: 'GET',
+      dataType: 'json'
     });
-  };
+  }
 
   // File model...
   function File(config) {
@@ -32,17 +40,15 @@ define(['css!./fileselection.css', 'text!./fileselection.html', 'lib/knockout/kn
     self.isFile = !config.isDirectory;
     self.highlighted = ko.observable(false);
     self.cancelable = config.cancelable || false;
-  };
+  }
 
   // Function for filtering...
   function fileIsHighlighted(file) {
     return file.highlighted();
-  };
+  }
   function noop() {}
 
-  var FileSelection = utils.Class(Widget, {
-    id: 'file-selection-widget',
-    template: template,
+  var FileSelection = utils.Class({
     init: function(config) {
       var cfg = config || {};
       var self = this;
@@ -77,22 +83,21 @@ define(['css!./fileselection.css', 'text!./fileselection.html', 'lib/knockout/kn
       } else {
         this.loadRoots();
       }
-
-      debug && console.log(config.dom);
-      $(config.dom).on("click", ".directories li", function(e){
-          e.preventDefault();
-          var it = this;
-          var context = ko.contextFor(it);
-          if(context.$data.location) {
-            self.load(context.$data.location);
-          } else {
-            // TODO - Only on windows.
-            self.loadRoots();
-          }
-          return false;
-       });
-
-      self.renderTo(config.dom)
+    },
+    render: function(element) {
+      var self = this;
+      return ko.bindhtml(tpl, self);
+    },
+    clickDir: function(context,event){
+      event.preventDefault();
+      var self = this;
+      if(context.location) {
+        self.load(context.location);
+      } else {
+        // TODO - Only on windows.
+        self.loadRoots();
+      }
+      return false;
     },
     chooseCurrent: function() {
       var self = this;
@@ -100,18 +105,18 @@ define(['css!./fileselection.css', 'text!./fileselection.html', 'lib/knockout/kn
     },
     gotoParent: function() {
       var self = this;
-      if (separator == "/") {
+      if (window.separator === "/") {
         // Unix
         self.load("/" + self.shownDirectory().split("/").slice(1,-1).join("/"));
       }
       else {
         // Windows
         // assumes single char drive letters
-        if (self.shownDirectory().length == 3) {
+        if (self.shownDirectory().length === 3) {
           // C:\ -> Drive listing
           self.loadRoots();
         }
-        else if (self.shownDirectory().split("\\").length == 2) {
+        else if (self.shownDirectory().split("\\").length === 2) {
           // C:\Users -> C:\
           self.load(self.shownDirectory().substr(0, 3))
         }
@@ -130,11 +135,11 @@ define(['css!./fileselection.css', 'text!./fileselection.html', 'lib/knockout/kn
     loadRoots: function(dir) {
       var self = this;
       browseRoots().done(function(values) {
-          self.currentFiles($.map(values, function(config) {
-              return new File(config);
-          }));
+        self.currentFiles($.map(values, function(config) {
+          return new File(config);
+        }));
       }).error(function() {
-        alert('Failed to load file system roots.');
+        window.alert('Failed to load file system roots.');
       });
     },
     load: function(dir) {
@@ -153,8 +158,8 @@ define(['css!./fileselection.css', 'text!./fileselection.html', 'lib/knockout/kn
         self.currentFiles($.map(fileConfigs, function(config) {
           return new File(config);
         }));
-      }).error(function() {
-        alert('Failed to load directory listing for: ' + dir);
+      }).error(function(e) {
+        window.alert(e.responseText);
       });
     },
     select: function() {
@@ -169,5 +174,7 @@ define(['css!./fileselection.css', 'text!./fileselection.html', 'lib/knockout/kn
       this.onCancel();
     }
   });
+
   return FileSelection;
+
 });

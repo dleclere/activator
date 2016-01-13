@@ -1,0 +1,86 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+@-webkit-keyframes shape {
+  0%   {  -webkit-transform: scale(0);   }
+  20%  {  -webkit-transform: scale(1.2); }
+  30%  {  -webkit-transform: scale(.9);  }
+  40%  {  -webkit-transform: scale(1);   }
+  80%  {  -webkit-transform: scale(1);   }
+  100% {  -webkit-transform: scale(0);   }
+}
+@-moz-keyframes shape {
+  0%   {  -moz-transform: scale(0);   }
+  20%  {  -moz-transform: scale(1.2); }
+  30%  {  -moz-transform: scale(.9);  }
+  40%  {  -moz-transform: scale(1);   }
+  80%  {  -moz-transform: scale(1);   }
+  100% {  -moz-transform: scale(0);   }
+}
+@keyframes shape {
+  0%   {  transform: scale(0);   }
+  20%  {  transform: scale(1.2); }
+  30%  {  transform: scale(.9);  }
+  40%  {  transform: scale(1);   }
+  80%  {  transform: scale(1);   }
+  100% {  transform: scale(0);   }
+}
+
+@-webkit-keyframes mark {
+  20%  { -webkit-transform: scale(0);   }
+  30%  { -webkit-transform: scale(1.2); }
+  35%  { -webkit-transform: scale(.9);  }
+  45%  { -webkit-transform: scale(1);   }
+  70%  { -webkit-transform: scale(1);   }
+  100% { -webkit-transform: scale(0);   }
+}
+@-moz-keyframes mark {
+  20%  { -moz-transform: scale(0);   }
+  30%  { -moz-transform: scale(1.2); }
+  35%  { -moz-transform: scale(.9);  }
+  45%  { -moz-transform: scale(1);   }
+  70%  { -moz-transform: scale(1);   }
+  100% { -moz-transform: scale(0);   }
+}
+@keyframes mark {
+  20%  { transform: scale(0);   }
+  30%  { transform: scale(1.2); }
+  35%  { transform: scale(.9);  }
+  45%  { transform: scale(1);   }
+  70%  { transform: scale(1);   }
+  100% { transform: scale(0);   }
+}
+
+.sticker {
+  position: absolute;
+  .shape, .mark {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    -webkit-transform: scale(0);
+    -moz-transform: scale(0);
+    transform: scale(0);
+  }
+  .shape {
+    border-radius: 15px;
+  }
+  &.animate .shape {
+    -webkit-animation: 1500ms shape 1 ease-in-out;
+    -webkit-animation-fill-mode: both;
+    -moz-animation: 1500ms shape 1 ease-in-out;
+    -moz-animation-fill-mode: both;
+    animation: 1500ms shape 1 ease-in-out;
+    animation-fill-mode: both;
+  }
+  &.animate .mark {
+    -webkit-animation: 1500ms  mark 1 ease-in-out;
+    -webkit-animation-fill-mode: both;
+    -moz-animation: 1500ms  mark 1 ease-in-out;
+    -moz-animation-fill-mode: both;
+    animation:  1500ms mark 1 ease-in-out;
+    animation-fill-mode: both;
+  }
+}

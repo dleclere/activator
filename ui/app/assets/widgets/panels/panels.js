@@ -1,8 +1,13 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
 define([
+  'widgets/layout/layoutManager',
   'commons/settings',
   "text!./panels.html",
   "css!./panels"
 ], function(
+  layoutManager,
   settings,
   template
 ){
@@ -13,43 +18,53 @@ define([
   //     return it.panel;
   //   }));
   // }, []);
-  var panels = ['plugins/tutorial/tutorial'];
+  var panels = ['plugins/tutorial/tutorialPanel'];
 
-  $panels = $(template)[0];
-  currentPanel = ko.observable();
-
-  var panelOpened = settings.observable("app.panelOpened", true);
-  var panelShape = settings.observable("app.panelShape", "right1");
-  var dropdownActive = ko.observable(false);
+  var currentPanel = ko.observable();
 
   var switchPanel = function(panel) {
     require([panel], function(p) {
-      $("#panelWrapper").replaceWith(p.renderPanel());
+      $("#panelWrapper").replaceWith(p.render());
       currentPanel(panel);
     });
   }
-  var toggle = function() {
-    panelOpened(!panelOpened());
+
+  // Resizing
+  function startResize(m,e){
+    e.preventDefault();
+    layoutManager.resizing(true);
+    window.addEventListener("mousemove", resize);
+    window.addEventListener("mouseup", stopResize);
   }
-  var toggleShape = function(data, event){
-    panelShape(event.target.dataset.panelShape);
-    dropdownActive(false);
+  function resize(e){
+    e.preventDefault();
+    e.stopPropagation();
+    if (layoutManager.panelShape()[0] === 'r'){
+      var newWidth = (window.innerWidth - e.pageX);
+      if (newWidth > 300 && newWidth < 700){
+        layoutManager.panelWidth(Math.round(newWidth/10)*10);
+      }
+    } else {
+      var newHeight = (window.innerHeight - e.pageY);
+      if (newHeight > 200 && newHeight < 600){
+        layoutManager.panelHeight(Math.round(newHeight/10)*10);
+      }
+    }
   }
-  var toggleDropdown = function(data, event){
-    event.stopPropagation();
-    dropdownActive(!dropdownActive());
+  function stopResize(e){
+    e.preventDefault();
+    layoutManager.resizing(false);
+    window.removeEventListener("mousemove", resize);
+    window.removeEventListener("mouseup", stopResize);
   }
 
 
   var PanelState = {
-    panelOpened: panelOpened,
-    panelShape: panelShape,
+    panelWidth: layoutManager.panelWidth,
     panels: panels,
     currentPanel: currentPanel,
     switchPanel: switchPanel,
-    toggle: toggle,
-    toggleShape: toggleShape,
-    toggleDropdown: toggleDropdown
+    startResize: startResize
   };
 
   // Default panel:
@@ -59,8 +74,7 @@ define([
 
   return {
     render: function() {
-      ko.applyBindings(PanelState, $panels);
-      return $panels
+      return ko.bindhtml(template, PanelState)
     },
     state: PanelState
   }

@@ -1,0 +1,110 @@
+/**
+ * Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+
+@import '../../../commons/_reset.less';
+@import '../../../commons/_base.less';
+
+#open {
+
+  right: 40px;
+  width: 300px;
+  .column();
+
+  .recentApp {
+    .delete {
+      display: block;
+      position: absolute;
+      z-index: 99;
+      top: 13px;
+      right: 12px;
+      border-radius: 10px;
+      width: 15px;
+      height: 15px;
+      line-height: 13px;
+      font-size: 15px;
+      text-align: center;
+      background: #fff;
+      color: @red;
+      opacity: 0;
+      .transition();
+    }
+    &:hover .delete {
+      opacity: 1;
+    }
+  }
+
+}
+
+#openAppForm {
+  .expand();
+  border-top: 1px solid #ddd;
+  overflow: auto;
+}
+
+
+#openAppForm {
+  background: #f5f5f5;
+  li {
+    position: relative;
+    a:after {
+      content: " ";
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+  }
+}
+
+#openButton {
+  float: right;
+  display: block;
+  width: 60px;
+  height: 39px;
+  border: 0;
+  border-left: 1px solid #D8D8D8;
+  background: white;
+  &.opened {
+    background: #E25758 url("/public/images/icons/close.svg") center center no-repeat;
+    color: white;
+  }
+}
+#openButton {
+  line-height: 37px;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  background: url("/public/icons/folder-red.svg") center center no-repeat;
+}
+
+
+@media (max-width: 1023px) {
+
+  #open {
+    margin: 20px auto;
+    width: 700px;
+    height: 210px;
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+  #openAppForm {
+    margin: 0 auto;
+    width: 700px;
+    height: 170px;
+  }
+  #openAppLocationBrowser {
+    .fileselection {
+      position: relative;
+      top: 0;
+      height: 170px;
+      overflow-y: auto;
+    }
+  }
+
+}

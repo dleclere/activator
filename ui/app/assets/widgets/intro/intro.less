@@ -1,0 +1,43 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+.intro {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%,-50%);
+  -moz-transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%);
+  max-width: 600px;
+  box-shadow: 3px 3px 0 fadeout(#000,93%);
+
+  h1 {
+    margin: 10px 0 5px;
+  }
+
+  // When there is a menu before
+  &.stack {
+    top: 40px;
+    left: 0;
+    -webkit-transform: none;
+    -moz-transform: none;
+    transform: none;
+    &:before {
+      content: url(/assets/images/fat-arrow-helper.svg);
+      position: absolute;
+      top: 20px;
+      right: 100%;
+    }
+  }
+
+  header {
+    background: @blue;
+    color: #fff;
+  }
+  > div {
+    padding: 4px 20px 20px;
+    background: #fff;
+  }
+}

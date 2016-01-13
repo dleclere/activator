@@ -3,7 +3,7 @@
  */
 package launcher
 
-import snap.tests._
+import activator.tests._
 
 class MustStartUI extends IntegrationTest {
 

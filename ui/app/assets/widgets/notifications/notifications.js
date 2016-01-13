@@ -1,17 +1,44 @@
 /*
- Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
  */
-define(['text!./notifications.html', 'lib/knockout/knockout', 'commons/widget', 'commons/utils', 'services/build'],
-    function(template, ko, Widget, utils, build) {
+define([
+  'services/sbt',
+  'commons/websocket',
+  'services/ajax',
+  'text!./notifications.html',
+  'css!widgets/buttons/dropdown',
+  'css!./notifications',
+  'css!widgets/stickers/stickers'
+], function(
+  sbt,
+  websocket,
+  fs,
+  tpl
+){
 
-  var Notifications = utils.Class(Widget, {
-    id: 'notifications-widget',
-    template: template,
-    init: function() {
-      this.count = ko.computed(function() { return build.errors.all().length; });
-      this.items = build.errors.all;
+  var State = {
+    appStatus: sbt.events.appStatus,
+    unreadBuildErrors: sbt.events.unreadBuildErrors,
+    notifications: sbt.events.notifications,
+    notificationsReadCount: ko.computed(function() {
+      return sbt.events.notifications().filter(function(n) {
+        return !n.read();
+      }).length;
+    }),
+    markAsRead: function() {
+      sbt.events.notifications().forEach(function(n) {
+        n.read(true);
+      });
     }
+  };
+
+  sbt.tasks.taskCompleteEvent.subscribe(function(e) {
+    var el = $("#notifications ."+(e.succeded?"success":"error")).removeClass('animate');
+    setTimeout(function(){
+      el.addClass('animate');
+    },50);
   });
 
-  return new Notifications();
+  return ko.bindhtml(tpl, State);
+
 });

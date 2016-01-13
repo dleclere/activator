@@ -5,15 +5,15 @@ define(['text!./compile.html', 'main/plugins', 'services/build', 'css!./compile.
   function(template, plugins, build, LogView) {
 
     var STATUS_DEFAULT = 'default';
-    var STATUS_BUSY = 'busy';
-    var STATUS_ERROR = 'error;'
+    // var STATUS_BUSY = 'busy';
+    // var STATUS_ERROR = 'error;'
 
     var CompileState = (function(){
       var self = {};
 
       self.title = ko.observable("Compile");
       self.startStopLabel = ko.computed(function() {
-        if (build.compile.haveActiveTask())
+        if (build.activity.compiling())
           return "Stop compiling";
         else
           return "Start compiling";

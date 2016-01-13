@@ -86,6 +86,8 @@ To make it easy to re-launch Activator (either from a file browser or command li
 When running activator behind a proxy, some additional configuration is needed.  Open the `~/.activator/activatorconfig.txt` file in a text editor (creating it if necessary.  Once you have the file open and ready to configure, we need to make sure it has the following lines:
 
     # This are the proxy settings we use for activator
+    # Multiple proxy hosts can be used by separating them with a '|' sign
+    # Do not enclose the proxy host(s) in quotes
     -Dhttp.proxyHost=PUT YOUR PROXY HOST HERE
     -Dhttp.proxyPort=PUT YOUR PROXY PORT HERE
     # Here we configure the hosts which should not go through the proxy.  You should include your private network, if applicable.

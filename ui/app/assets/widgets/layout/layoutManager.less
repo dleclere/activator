@@ -1,0 +1,75 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+#header {
+  .toggleNavigation {
+    .square(50px);
+    background: @red url(/assets/images/icons/stripes.svg) center center no-repeat;
+    .transition();
+    &:hover, .navigation-opened & {
+      background-color: @red-dkr;
+    }
+  }
+}
+
+#layoutManager {
+  position: relative;
+  background-color: @red;
+  background-repeat: no-repeat;
+  
+  &:hover, .panel-opened & {
+    background-color: @red-dkr;
+  }
+  dt {
+    background-image: url(/assets/images/icons/layouts.svg);
+  }
+  [data-shape='right1'] & dt, .right1 {
+    background-position: 0 0;
+  }
+  [data-shape='right2'] & dt, .right2 {
+    background-position: 0 -50px;
+  }
+  [data-shape='bottom1'] & dt, .bottom1 {
+    background-position: 0 -100px;
+  }
+  [data-shape='bottom2'] & dt, .bottom2 {
+    background-position: 0 -150px;
+  }
+  &:hover .all-options {
+    opacity: .3;
+  }
+  .all-options {
+    position: absolute;
+    top: 36px;
+    right: 1px;
+    .square(14px);
+    background: url(/assets/images/icons/layouts.svg) bottom right;
+    opacity: 0;
+    .transition();
+    &:hover {
+      opacity: 1;
+    }
+  }
+  dd {
+    line-height: auto;
+  }
+  button {
+    .square(50px);
+    background-image: url(/assets/images/icons/layouts.svg);
+    background-color: @red;
+    float: left;
+    &:hover {
+      background-color: @red-dkr;
+    }
+  }
+
+  [data-shape='right1'] & .right1,
+  [data-shape='right2'] & .right2,
+  [data-shape='bottom1'] & .bottom1,
+  [data-shape='bottom2'] & .bottom2 {
+    display: none;
+  }
+}
+

@@ -1,168 +1,53 @@
 @(model: HomeModel, newApp: Form[NewAppForm], json: play.api.libs.json.JsValue)(implicit flash: Flash, request: RequestHeader)
 
-@import snap.WebSocketUtil.webSocketURLWithCSRF
+@import activator.WebSocketUtil.webSocketURLWithCSRF
 @import play.api.libs.json.JsString
 @import java.io.File
 
 <!-- Copyright (C) 2013 Typesafe, Inc <http://typesafe.com> -->
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8" />
-		<title>Typesafe Activator</title>
-		<!-- Initialize global Javascript values... -->
-		<script type="text/javascript">
-			window.debug = true;
-			var baseFolder = @Html(JsString(model.userHome).toString())
-			var separator = @Html(JsString(File.separator).toString())
-			var wsUrl = '@webSocketURLWithCSRF(routes.Application.homeStream)';
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="@routes.Assets.at("favicon.ico")" />
+    <title>Typesafe Activator</title>
+    <!-- Initialize global Javascript values... -->
+    <script type="text/javascript">
+      window.debug = true;
+      var baseFolder = @Html(JsString(model.userHome).toString());
+      var homeFolder = @Html(JsString(model.userHome).toString());
+      var separator = @Html(JsString(File.separator).toString());
+      var wsUrl = '@webSocketURLWithCSRF(routes.Application.homeStream)';
+      var tags = [
+        @Html(model.tags.sorted.map("'"+_+"'").mkString(","))
+      ];
+      var recentApps = [
+        @Html(model.recentApps.sortBy(_.usedTime).map { app =>
+          "{ id: '"+app.id+"', url: '"+routes.Application.app(app.id)+"', name: '"+app.cachedName.getOrElse(app.id)+"', location: '"+app.location+"' }"
+        }.mkString(","))
+      ]
+      var templates = @Html(json.toString);
+    </script>
+    <script data-main="@routes.Assets.at("home/home.js")" type="text/javascript" src="@routes.Assets.at("lib/requirejs/require.js")"></script>
+    <link rel="shortcut icon" type="image/png" href="/public/images/favicon.png">
+  </head>
+  <body>
 
-			var templates = @Html(json.toString);
-		</script>
-        <script data-main="@routes.Assets.at("home/home.js")" type="text/javascript" src="@routes.Assets.at("lib/requirejs/require.js")"></script>
-		<link rel="stylesheet" media="screen" href="@routes.Assets.at("home/home.css")">
-		<link rel="shortcut icon" type="image/png" href="/public/images/favicon.png">
-    <!--[if lte IE 9]>
-    <script src='@routes.Assets.at("commons/ie.js")' type='text/javascript'></script>
-    <![endif]-->
-	</head>
-	<body>
-
-    <img id="logo" src="/public/images/logo.svg"/>
     @flash.get("error").map { error =>
         <script>alert("@error")</script>
     }
 
-		<section id="working">
-			<header>
-				<h2>Your application is being opened</h2>
-			</header>
-			<article>
-				<p>This will just take a minute...</p>
-				<div class="logs" id="loading-logs"></div>
-			</article>
-		</section>
+    <img id="logo" src="/public/images/activator.svg" height="50" />
 
-		<section id="new">
-			<div class="half">
-				<header class="tabs">
-					<h2 data-bind="click: showTemplates, css: {active: openedTab() == 'templates'}">Tutorials</h2>
-					<h2 data-bind="click: showSeeds, css: {active: openedTab() == 'seed'}">Seeds</h2>
-				</header>
-				<article id="templateList" data-bind="visible: openedTab() == 'templates'">
-					<aside id="filter">
-						<span class="clear" data-bind="click: clearSearch">×</span>
-						<input type="text" placeholder="Filter templates" data-bind="value: filterValue, event: {  keyup: search, change: search }" />
-					</aside>
-					<ul class="list" data-bind="foreach: filteredTemplates">
-						<li class="template" data-bind="css: {featured: featured, active: $root.currentAppId() == id}, click: $root.chooseTemplate">
-							<input type="radio" name="template" data-bind="value: id">
-							<span data-bind="text: title"></span>
-							<ul class="tags" data-bind="foreach: tags">
-								<li data-bind="text: $data"></li>
-							</ul>
-						</li>
-					</ul>
-				</article>
-				<article id="seedList" data-bind="visible: openedTab() == 'seed'">
-					<ul class="list" data-bind="foreach: seeds">
-						<li class="template" data-bind="css: {featured: featured, active: $root.currentAppId() == id}, click: $root.chooseSeed">
-							<input type="radio" name="template" data-bind="value: id">
-							<span data-bind="text: title"></span>
-							<ul class="tags" data-bind="foreach: tags">
-								<li data-bind="text: $data"></li>
-							</ul>
-						</li>
-					</ul>
-				</article>
-			</div>
+    <!-- ko include: working --><!-- /ko -->
 
-			<!-- ko if:currentApp -->
-			<div id="viewTemplate" class="half right" data-bind="with: currentApp">
-				<div class="template">
-					<span class="clear" data-bind="click: $root.closeTemplate">×</span>
-					<h3 data-bind="text: title"></h3>
-					<ul class="tags" data-bind="foreach: tags">
-						<li data-bind="click: $root.searchTag, text: $data"></li>
-					</ul>
-					<p data-bind="text: description"></p>
- 					<div class="author">
-						<p><cite>by <span data-bind="text: authorName"></span>
-                        <!-- ko if:authorTwitter -->
-                        (<a target="_blank" data-bind="attr: { href: 'http://twitter.com/' + authorTwitter }, text: authorTwitter"></a>)
-                        <!--  /ko -->
-                        </cite></p>
-						<p><a target="_blank" data-bind="attr: { href: sourceLink }, text: sourceLink" class="source"></a></p>
-					</div>
-					<div class="promote partner">
-						<img data-bind="attr: { src: authorLogo }">
-						<h4 data-bind="text: authorName"></h4>
-						<p data-bind="text: authorBio"></p>
-                    </div>
- 				</div>
-				@helper.form(action = routes.Application.forceHome, 'id -> "newApp") {
-					<h4>Create an app from this template</h4>
-					<input type="hidden" name="template-name" data-bind="value: id">
-					<input type="hidden" name="template" data-bind="value: id">
-					<input type="hidden" id="appName" name="name" data-bind="value: name">
-					<p>
-					<a href="#" id="browseAppLocation"></a>
-					<input type="text" id="newappLocation" name="location" data-bind="value: baseFolder + separator + name">
-					</p>
-					<div class="select">
-						<input type="submit" class="button" value="Create" id="newButton">
-					</div>
-				}
-			</div>
-			<!-- /ko -->
-			<div id="newAppLocationBrowser" class="subsection hidden">
-				<header>
-					<span class="close" data-bind="click: $root.closeNewBrowser">×</span>
-					<h2>Choose a destination</h2>
-				</header>
-				<div class="list"></div>
-			</div>
+    <!-- ko include: templates --><!-- /ko -->
 
-			<!-- ko ifnot:currentApp -->
-			<div id="welcome" class="half right">
-				<h3>Create a new app</h3>
-        <p>You will be learning and writing code in seconds...</p>
-				<ol class="steps">
-					<li>Choose a template</li>
-					<li>Specify a location</li>
-					<li>Activate it!</li>
-				</ol>
-				<h4>Filter templates by a tag:</h4>
-				<ul class="inspiration tags">
-					@model.tags.sorted.map { i =>
-						<li data-bind="click: searchTag">@i</li>
-					}
-				</ul>
-			</div>
-			<!-- /ko -->
-			<!-- <div id="newAppLocationBrowser" class="subsection fileBrowser"></div> -->
-		</section>
+    <!-- ko include: open --><!-- /ko -->
 
-		<section id="open">
-			<header>
-				<span id="openButton">📁</span>
-				<h2>Open existing app</h2>
-			</header>
-			<article id="openAppForm">
-				<ul class="list">
-				@model.recentApps.sortBy(_.usedTime).map { app =>
-					<li class="recentApp">
-						<h3><a href="@routes.Application.app(app.id)">@app.cachedName.getOrElse(app.id)</a></h3>
-						<p class="path"><span>@app.location</span></p>
-					</li>
-				}
-				</ul>
-			</article>
-				<!-- <article id="openAppLocationBrowser" class="subsection fileBrowser"></article> -->
-			<div id="openAppLocationBrowser" class="subsection hidden"></div>
-		</section>
+    <!-- ko include: modals --><!-- /ko -->
 
-        <a href="http://typesafe.com/legal/softwareterms" class="tos" target="_blank">Terms of Use</a>
+    <a href="http://typesafe.com/legal/softwareterms" class="tos" target="_blank">Terms of Use</a>
         
-	</body>
+  </body>
 </html>

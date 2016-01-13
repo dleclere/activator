@@ -1,0 +1,18 @@
+<section id="open">
+  <header>
+    <span id="openButton" data-bind="click: clickOpenButton">📁</span>
+    <h2>Open existing app</h2>
+  </header>
+  <article id="openAppForm">
+    <ul class="list" data-bind="foreach: window.recentApps">
+      <li class="recentApp">
+        <h3><a data-bind="href: url, text: name"></a></h3>
+        <p class="path" data-bind="text: location"></p>
+        <button class="delete" data-bind="click: $root.deleteApp" title="Remove project">×</button>
+      </li>
+    </ul>
+  </article>
+  <div id="openAppLocationBrowser" class="subsection" style="display:none;">
+    <!-- ko include: fs.render.bind(fs)() --><!-- /ko -->
+  </div>
+</section>

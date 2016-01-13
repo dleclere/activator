@@ -1,84 +1,63 @@
 /*
- Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
  */
 define([
-  "main/plugins",
-  "text!./test.html",
-  'services/build',
-  "css!./test",
-  "widgets/navigation/menu"
+  'main/plugins',
+  'services/sbt',
+  'text!./test.html',
+  "widgets/layout/layout",
+  'css!./test',
+  "css!widgets/buttons/switch",
+  "css!widgets/menu/menu",
+  "css!widgets/buttons/select",
+  "css!widgets/buttons/button",
+  "css!widgets/modules/modules"
 ], function(
   plugins,
-  template,
-  build
-) {
+  sbt,
+  tpl,
+  layout
+){
 
-  var TestState = (function(){
-    var self = {};
+  var mainTestAction = function() {
+    if (sbt.tasks.pendingTasks.test()){
+      sbt.tasks.actions.kill("test");
+    } else {
+      sbt.tasks.actions.test();
+    }
+  }
+  var mainTestName = ko.computed(function() {
+    return sbt.tasks.pendingTasks.test()?"Stop":"Test";
+  });
 
-      // aliases to export build model to HTML;
-      // these should likely go away someday
-      self.results = build.test.results;
-      self.testStatus = build.test.testStatus;
-      self.hasResults = build.test.hasResults;
-      self.haveActiveTask = build.test.haveActiveTask;
-      self.rerunOnBuild = build.test.rerunOnBuild;
-      self.restartPending = build.test.restartPending;
-      self.resultStats = build.test.resultStats;
 
-      self.testFilter       = ko.observable('all');
-      self.filterTestsText  = ko.computed(function() {
-        if(self.testFilter() == 'all')
-          return 'Show only failures';
-        else
-          return 'Show all tests';
-      });
-      self.displayedResults = ko.computed(function() {
-        if(self.testFilter() == 'failures') {
-          return ko.utils.arrayFilter(self.results(), function(item) {
-            return item.outcome() != build.TestOutcome.PASSED;
-          });
-        }
-        return self.results();
-      });
-      self.startStopLabel   = ko.computed(function() {
-        if (self.haveActiveTask())
-          return "Stop";
-        else
-          return "Start";
-      });
-
-      self.filterTests      = function() {
-        // TODO - More states.
-        if(this.testFilter() == 'all') {
-          this.testFilter('failures')
-        } else {
-          this.testFilter('all')
-        }
-      }
-      self.startStopButtonClicked = function(self) {
-        debug && console.log("Start/Stop was clicked");
-        build.toggleTask('test');
-      }
-      self.restartButtonClicked = function(self) {
-        debug && console.log("Restart was clicked");
-        build.restartTask('test');
-      }
-
-      return self;
-
-  }());
-
-  return {
-    render: function(url) {
-      var $test = $(template)[0];
-      ko.applyBindings(TestState, $test);
-      return $test;
-    },
-
-    route: plugins.memorizeUrl(function(url, breadcrumb) {
-      // not used yet
-    })
+  var sbtExecCommand = function(cmd){
+    sbt.tasks.requestExecution(cmd);
   }
 
+  var State = {
+    results: sbt.tasks.testResults,
+    retestOnSuccessfulBuild: sbt.app.settings.retestOnSuccessfulBuild,
+    sbtExecCommand: sbtExecCommand,
+    mainTestAction: mainTestAction,
+    mainTestName: mainTestName,
+    sbt: sbt
+  }
+
+  return {
+    render: function(url){
+      layout.renderPlugin(ko.bindhtml(tpl, State))
+    },
+
+    route: function(url, breadcrumb){
+      var all = [
+        ['test/', "Test"]
+      ];
+      if(url.parameters[0]){
+        breadcrumb(all);
+      } else {
+        breadcrumb(all);
+      }
+    }
+  }
 });

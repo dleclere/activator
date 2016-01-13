@@ -1,14 +1,15 @@
 /*
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
+/*jslint proto: true */
 define([], function() {
 
   // does the browser have __proto__ ?
   // IE adds it in 11, others should have it.
-  var __proto__Works = (function() {
+  var _protoWorks = (function() {
     function F() {}
     F.prototype = { foo: 42 };
-    var anF = new F;
+    var anF = new F();
     return ('__proto__' in anF && anF.__proto__ === F.prototype &&
         ({ __proto__ : F.prototype }).foo === 42);
   })();
@@ -31,10 +32,10 @@ define([], function() {
   var Class = function() {
     var baseclass;
     var o;
-    if (arguments.length == 2) {
+    if (arguments.length === 2) {
       baseclass = arguments[0];
       o = arguments[1];
-    } else if (arguments.length == 1) {
+    } else if (arguments.length === 1) {
       baseclass = Object;
       o = arguments[0];
     } else {
@@ -63,7 +64,7 @@ define([], function() {
 
     // proto is our eventual M.prototype
     var proto;
-    if (__proto__Works) // IE < 11 is the problem here
+    if (_protoWorks) // IE < 11 is the problem here
       proto = { __proto__ : baseclass.prototype };
     else
       proto = $.extend({}, baseclass.prototype);
@@ -127,11 +128,10 @@ define([], function() {
 
   var Singleton = function(base, o) {
     var baseclass;
-    var o;
-    if (arguments.length == 2) {
+    if (arguments.length === 2) {
       baseclass = arguments[0];
       o = arguments[1];
-    } else if (arguments.length == 1) {
+    } else if (arguments.length === 1) {
       baseclass = Object;
       o = arguments[0];
     } else {
@@ -144,7 +144,7 @@ define([], function() {
 
   function arrayGTZero(obs) {
     return ko.computed(function() {
-      if (obs().length == undefined) {
+      if (obs().length === undefined) {
         return false;
       }
 

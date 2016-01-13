@@ -7,7 +7,10 @@ import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 import com.typesafe.sbt.SbtGit
 import com.typesafe.sbt.SbtPgp
-import com.typesafe.sbt.SbtPgp.PgpKeys
+import com.typesafe.sbt.SbtPgp.autoImport._
+import bintray.Plugin.bintrayPublishSettings
+import bintray.Keys._
+
 
 object ActivatorBuild {
   // Don't calculate versions EVERYWHERE, just in global...
@@ -34,16 +37,18 @@ object ActivatorBuild {
 
   def activatorDefaults: Seq[Setting[_]] =
     SbtScalariform.scalariformSettings ++
+    bintrayPublishSettings ++
     Seq(
       organization := "com.typesafe.activator",
       version <<= version in ThisBuild,
       crossPaths := false,
       resolvers += "typesafe-mvn-releases" at "https://repo.typesafe.com/typesafe/releases/",
       resolvers += Resolver.url("typesafe-ivy-releases", new URL("https://repo.typesafe.com/typesafe/releases/"))(Resolver.ivyStylePatterns),
-      // TODO - Publish to ivy for sbt plugins, maven central otherwise?
-      publishTo := Some(typesafeIvyReleases),
       publishMavenStyle := false,
       publish := { throw new RuntimeException("use publishSigned instead of plain publish") },
+      bintrayOrganization in bintray := Some("typesafe"),
+      repository in bintray := "ivy-releases",
+      licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html")),
       scalacOptions <<= (scalaVersion) map { sv =>
         Seq("-unchecked", "-deprecation") ++
           { if (sv.startsWith("2.9")) Seq.empty else Seq("-feature") }
@@ -59,7 +64,7 @@ object ActivatorBuild {
       makeFixWhitespace(Test),
       compileInputs in (Compile, compile) <<= (compileInputs in (Compile, compile)) dependsOn (fixWhitespace in Compile),
       compileInputs in (Test, compile) <<= (compileInputs in (Test, compile)) dependsOn (fixWhitespace in Test)
-    ) ++ JavaVersionCheck.javacVersionCheckSettings ++ SbtPgp.settings ++
+    ) ++ JavaVersionCheck.javacVersionCheckSettings ++ SbtPgp.projectSettings ++
     net.virtualvoid.sbt.graph.Plugin.graphSettings ++
     // these have to be after SbtPgp.settings
     Seq(
@@ -129,7 +134,9 @@ object ActivatorBuild {
     Project("activator-" + name, file(name))
     .enablePlugins(PlayScala, SbtWeb)
     .noAutoPgp
-    settings(libraryDependencies += "com.typesafe.play" %% "filters-helpers" % play.core.PlayVersion.current)
+    settings(libraryDependencies ++= Seq(
+      "com.typesafe.play" %% "filters-helpers" % play.core.PlayVersion.current,
+      "com.typesafe.play" %% "play-ws" % play.core.PlayVersion.current))
     settings(LessKeys.verbose := true)
     settings(activatorDefaults:_*)
   )

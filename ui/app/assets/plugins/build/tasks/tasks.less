@@ -1,0 +1,107 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../../commons/_base";
+@import "../../../commons/_animations";
+
+.tasks {
+  .pluginBlock {
+    height: 200px;
+  }
+
+  > section {
+    .column();
+  }
+
+  table {
+    width: 100%;
+  }
+
+  .tasks-wrapper {
+    height: 140px;
+    th, td {
+      .ellipsis();
+      padding: 2px 5px 3px;
+    }
+    tr {
+      cursor: pointer;
+      &:hover {
+        background: @slate-ltr;
+      }
+    }
+    .failed {
+      color: @red;
+      &, &+li {
+        border-color: @red-text !important;
+      }
+    }
+    .data, .time {
+      width: 200px;
+    }
+    .status {
+      width: 22px;
+      span {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        background: url(/assets/icons/reload-mini.svg) center center no-repeat;
+        opacity: .2;
+      }
+    }
+    tr .status:hover span {
+      opacity: 1;
+    }
+    .active .status span {
+      background: url(/assets/icons/working-mini.svg) center center no-repeat;
+      .spin();
+      opacity: 1;
+    }
+    .active:hover .status span {
+      background: url(/assets/icons/cancel-mini.svg) center center no-repeat;
+      .no-anim();
+    }
+    .pending .status span {
+      background: url(/assets/icons/pending-mini.svg) center center no-repeat;
+      opacity: 1;
+    }
+    .command {
+      color: @grey-ltr;
+    }
+    tr:hover .command {
+      color: #fff;
+    }
+    .time {
+      padding: 3px 20px 3px 3px;
+      text-align: right;
+    }
+    .error, .error .command {
+      color: @red;
+    }
+  }
+
+  .filtering {
+    padding: 4px 10px;
+    background: @yellow;
+    color: @yellow-text;
+    .command {
+      color: rgba(0,0,0,.8);
+    }
+    .close {
+      cursor: pointer;
+      background: rgba(0,0,0,.2);
+      color: @yellow;
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      line-height: 15px;
+      text-align: center;
+      border-radius: 8px;
+      &:hover {
+        background: rgba(0,0,0,.5);
+      }
+    }
+  }
+
+}
+
+

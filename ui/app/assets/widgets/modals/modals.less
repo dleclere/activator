@@ -1,0 +1,78 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+#modal {
+  position: fixed;
+  z-index: 9999;
+  .trbl(0);
+  background: rgba(255, 255, 255, 0.4);
+  .modal-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    .center();
+    width: 400px;
+    background: @slate;
+    border-radius: 4px;
+    overflow: hidden;
+
+    &[data-shape="large"] {
+      width: 600px;
+    }
+  }
+
+  .button {
+    display: inline-block;
+    padding: 6px 12px;
+    line-height: inherit;
+    vertical-align: middle;
+    background: @blue;
+    color: #fff;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 3px;
+    .title();
+    g {
+      .transition();
+      fill: #fff;
+    }
+    .transition();
+    &:hover, &.active {
+      background: @blue-dkr;
+    }
+
+    margin: 0 5px;
+    border: 1px solid @blue;
+    &.light {
+      background: none;
+      border-color: @grey;
+      color: @grey;
+      &:hover {
+        background: @slate;
+      }
+    }
+    &[disabled] {
+      background: none;
+      border: 1px solid @grey;
+      color: @grey;
+      opacity: .6;
+    }
+  }
+  header, footer, article {
+    padding: 10px 20px;
+  }
+  header {
+    color: #fff;
+    background: @slate-ltr;
+  }
+  footer {
+    text-align: center;
+    background: @slate-ltr;
+  }
+  article {
+    color: @grey-ltr;
+  }
+}

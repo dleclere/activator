@@ -1,23 +1,15 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
 @import "../../commons/_base";
 
-.switch-input {
-  position: absolute;
-  top: -9999em;
-}
-label.switch {
-  display: block;
+.switch {
   position: relative;
-  span {
-    display: block;
-  }
-  .outer {
-    position: relative;
-    width: 30px;
-    height: 16px;
-    border-radius: 8px;
-    border: 2px solid @white-dkr;
-    .transition();
-  }
+  width: 30px;
+  height: 16px;
+  border-radius: 8px;
+  border: 2px solid @white-dkr;
+  .transition();
   .inner {
     position: absolute;
     top: 2px;
@@ -28,13 +20,16 @@ label.switch {
     border-radius: 4px;
     .transition();
   }
-  input:checked + & {
-    .outer {
-      background: @blue;
-      border-color: #fff;
-    }
+  &.active {
+    background: @blue;
+    border-color: #fff;
     .inner {
       background: #fff;
+      left: 16px;
+    }
+  }
+  &.activating {
+    .inner {
       left: 16px;
     }
   }

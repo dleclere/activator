@@ -1,0 +1,24 @@
+<nav class="menu">
+  <header>
+    <h1>Browse Code</h1>
+    <div class="buttons">
+      <dl class="dropdown">
+        <dt>
+          <svg data-bind="svg: '/assets/icons/more.svg'"/>
+        </dt>
+        <dd>
+          <a data-bind="click: newDirAtRoot">New folder</a>
+          <a data-bind="click: newFileAtRoot">New file</a>
+          <a data-bind="click: refreshProject">Refresh project</a>
+          <a data-bind="click: revealProject">Reveal in system</a>
+          <a data-bind="click: openInEclipse">Create Eclipse project</a>
+          <a data-bind="click: openInIdea">Create IntelliJ project</a>
+        </dd>
+      </dl>
+    </div>
+  </header>
+  <div class="browser">
+    <ul data-bind="template: { name: 'nodetemplate', foreach: tree.children }">
+    </ul>
+  </div>
+</nav>

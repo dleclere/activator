@@ -1,13 +1,23 @@
 # Typesafe Activator
 
-This project aims to be the snappiest snaptastic snapster you've every snapping laid eyes on!  And by that, we mean it builds stuff.
+[![Join the chat at https://gitter.im/typesafehub/activator](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/typesafehub/activator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 For more information on using Activator, visit: [http://typesafe.com/activator](http://typesafe.com/activator)
 
+Activator aims to be a friendly one-stop-shop to bootstrap your
+Scala, Akka, and Play development. It can be used as a wrapper
+script that launches into traditional command line
+[sbt](http://www.scala-sbt.org/0.13/tutorial/Activator-Installation.html),
+but it also includes a template and tutorial system, and an
+optional GUI for getting started.
+
+You can think of Activator as traditional sbt (`activator shell`
+or `activator <sbt command here>`), plus an optional UI mode
+(`activator ui`), plus a template system (`activator new`).
+
+[Get the latest Activator download](http://typesafe.com/get-started).
+
 # Activator Developer Documentation
-
-This project uses [SBT 0.13](http://scala-sbt.org).   Make sure you have an SBT launcher, and run it in the checked out directory.
-
 
 ## Running the UI
 
@@ -33,6 +43,19 @@ or just
 
         dist/target/stage/activator
 
+### Troubleshooting
+
+Here are some potential issues with running a local Launcher:
+
+1. Stale cache: On it's own, `sbt stage` and `dist/target/stage/activator` should work. However, there are several caches between the developer and running `dist/target/stage/activator`. If it seems like your built version is not running, try clearing out the following caches:
+
+    `~/.sbt/boot/[current_scala_version]/com.typesafe.activator/activator-launcher/`
+
+    `~/.ivy2/local/com.typesafe.activator/activator-launcher/`
+
+    `~/.ivy2/cache/com.typesafe.activator/activator-launcher/`
+
+Also, the artifacts generated during the build process can become a problem. In your activator repo directory, you can run `git clean -X -d -f` to clear them.
 
 ## Testing
 
@@ -98,6 +121,7 @@ Release overview:
  * be sure `test`, `integrationTests`, `offlineTests`, and `checkTemplateCacheHash` are passing.
  * `publishSigned` then `s3Upload`.
  * push the version tag to github
+ * Bump the Heroku configuration for the activator servers so the latest release shows up on typesafe.com and assocaited sites.
 
 We do both `publishSigned` and `s3Upload`. To `publishSigned` you need a GPG key.
 

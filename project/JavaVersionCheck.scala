@@ -5,7 +5,7 @@ object JavaVersionCheck {
   val javacVersionCheck = taskKey[String]("checks the Java version vs. javacVersionPrefix, returns actual version")
 
   def javacVersionCheckSettings: Seq[Setting[_]] = Seq(
-    javacVersionPrefix := Some("1.6"),
+    javacVersionPrefix := Some("1.8"),
     javacVersionCheck := {
       val realLog = Keys.streams.value.log
       val javac = (Keys.compileInputs in Keys.compile in Compile).value.compilers.javac

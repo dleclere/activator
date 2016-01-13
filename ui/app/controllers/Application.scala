@@ -3,12 +3,13 @@
  */
 package controllers
 
+import activator.typesafeproxy._
 import play.api.mvc.{ Action, Controller, WebSocket }
 import java.io.File
 import scala.concurrent.Future
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
-import snap.{ RootConfig, AppConfig, AppManager, Platform, DeathReportingProxy }
+import activator.{ RootConfig, AppConfig, AppManager, Platform, DeathReportingProxy }
 import activator.properties.ActivatorProperties
 import play.Logger
 import play.api.libs.iteratee.{ Iteratee, Enumerator }
@@ -17,9 +18,11 @@ import play.api.Mode
 import play.filters.csrf._
 import java.util.concurrent.atomic.AtomicInteger
 import activator.cache.TemplateMetadata
+import java.util.UUID
 
 case class ApplicationModel(
   id: String,
+  socketId: String,
   location: String,
   plugins: Seq[String],
   name: String,
@@ -88,7 +91,7 @@ object Application extends Controller {
       templates = featured,
       otherTemplateCount = tempSeq.length,
       recentApps = getAppsThatExist(config.applications),
-      tags = Seq("reactive", "scala", "java", "java8", "starter", "akka", "play", "slick", "spray", "angular", "javascript", "database", "websocket"))
+      tags = Seq("reactive", "scala", "java", "java8", "starter", "akka", "play", "slick", "spray", "streams", "spark", "angular", "javascript", "database", "websocket"))
   }
 
   def redirectToApp(id: String) = CSRFAddToken {
@@ -124,7 +127,7 @@ object Application extends Controller {
     Action.async { implicit request =>
       // TODO - Different results of attempting to load the application....
       Logger.debug("Loading app for /app html page")
-      AppManager.loadApp(id).map { theApp =>
+      AppManager.getOrCreateApp(activator.AppIdSocketId(id, UUID.randomUUID())).map { theApp =>
         Logger.debug(s"loaded for html page: ${theApp}")
         Ok(views.html.main(getApplicationModel(theApp)))
       } recover {
@@ -155,8 +158,8 @@ object Application extends Controller {
   def search(id: String, search: String) = Action.async { implicit request =>
     // Logger.debug(s"Searching for actions on app [$id]: $search")
 
-    AppManager.loadApp(id).map { theApp =>
-      val fileResults = searchFileResults(search, theApp.config.location)
+    AppManager.loadConfigFromAppId(id).map { config =>
+      val fileResults = searchFileResults(search, config.location)
       import play.api.libs.json._
       Ok(Json toJson fileResults)
     } recover {
@@ -202,16 +205,16 @@ object Application extends Controller {
     } yield file
   }
 
-  private def connectionStreams(id: String): Future[(Iteratee[JsValue, _], Enumerator[JsValue])] = {
-    Logger.debug(s"Computing connection streams for app ID $id")
-    val streamsFuture = AppManager.loadApp(id) flatMap { app =>
+  private def connectionStreams(socketId: UUID): Future[(Iteratee[JsValue, _], Enumerator[JsValue])] = {
+    Logger.debug(s"Computing connection streams for app ID $socketId")
+    val streamsFuture = AppManager.getApp(socketId) flatMap { app =>
       Logger.debug(s"Loaded app for connection: $app")
       // this is just easier to debug than a timeout; it isn't reliable
       if (app.isTerminated) throw new RuntimeException("App is dead")
 
-      import snap.WebSocketActor.timeout
-      DeathReportingProxy.ask(app.system, app.actor, snap.CreateWebSocket).map {
-        case snap.WebSocketAlreadyUsed =>
+      import activator.WebSocketActor.timeout
+      DeathReportingProxy.ask(app.system, app.actor, activator.CreateWebSocket).map {
+        case activator.WebSocketAlreadyUsed =>
           Logger.warn("web socket already in use for $app")
           throw new RuntimeException("can only open apps in one tab at a time")
         case whatever =>
@@ -235,13 +238,15 @@ object Application extends Controller {
    * Connects from an application page to the "stateful" actor/server we use
    * per-application for information.
    */
-  def connectApp(id: String) = snap.WebSocketUtil.socketCSRFCheck {
+  def connectApp(socketId: String) = activator.WebSocketUtil.socketCSRFCheck {
+
+    val id = UUID.fromString(socketId)
 
     WebSocket.tryAccept[JsValue] { request =>
       Logger.debug("Connect request for app id: " + id)
-      // we kill off any previous browser tab
-      AppManager.loadTakingOverApp(id) flatMap { theApp =>
-        val streamsFuture = snap.Akka.retryOverMilliseconds(2000)(connectionStreams(id))
+
+      AppManager.getApp(id) flatMap { theApp =>
+        val streamsFuture = activator.Akka.retryOverMilliseconds(2000)(connectionStreams(id))
 
         streamsFuture onFailure {
           case e: Throwable =>
@@ -271,37 +276,38 @@ object Application extends Controller {
 
   /**
    * Returns the application model (for rendering the page) based on
-   * the current snap App.
+   * the current activator App.
    */
-  def getApplicationModel(app: snap.App) =
+  def getApplicationModel(app: activator.App) =
     ApplicationModel(
-      app.config.id,
+      app.id.appId,
+      app.id.socketId.toString(),
       Platform.getClientFriendlyFilename(app.config.location),
       // TODO - These should be drawn from the template itself...
       Seq("plugins/welcome/welcome", "plugins/code/code", "plugins/compile/compile", "plugins/test/test", "plugins/run/run", "plugins/inspect/inspect"),
       app.config.cachedName getOrElse app.config.id,
       // TODO - something less lame than exception here...
-      app.templateID,
+      app.config.templateID,
       getAppsThatExist(RootConfig.user.applications),
-      hasLocalTutorial(app))
+      hasLocalTutorial(app.config))
 
-  def hasLocalTutorial(app: snap.App): Boolean = {
-    val tutorialConfig = new java.io.File(app.config.location, activator.cache.Constants.METADATA_FILENAME)
+  def hasLocalTutorial(config: activator.AppConfig): Boolean = {
+    val tutorialConfig = new java.io.File(config.location, activator.cache.Constants.METADATA_FILENAME)
     tutorialConfig.exists
   }
 
   def appTutorialFile(id: String, location: String) = CSRFAddToken {
     Action.async { request =>
-      AppManager.loadApp(id) map { theApp =>
+      AppManager.loadConfigFromAppId(id) map { config =>
         // If we're debugging locally, pull the local tutorial, otherwise redirect
         // to the templates tutorial file.
-        if (hasLocalTutorial(theApp)) {
+        if (hasLocalTutorial(config)) {
           // TODO - Don't hardcode tutorial directory name!
-          val localTutorialDir = new File(theApp.config.location, "tutorial")
+          val localTutorialDir = new File(config.location, "tutorial")
           val file = new File(localTutorialDir, location)
           if (file.exists) Ok sendFile file
           else NotFound
-        } else theApp.templateID match {
+        } else config.templateID match {
           case Some(template) => Redirect(api.routes.Templates.tutorial(template, location))
           case None => NotFound
         }
@@ -317,9 +323,21 @@ object Application extends Controller {
 
   val homeActorCount = new AtomicInteger(1)
 
+  val typesafeComConfig = TypesafeComProxy.fromConfig(Play.current.configuration.underlying)
+  val lookupTimeout = typesafeComConfig.lookupTimeout
+  val loginEndpoint = AuthenticationActor.httpDoAuthenticate(typesafeComConfig.login.url, typesafeComConfig.login.timeout, defaultContext)_
+  val subscriberEndpoint = SubscriptionDataActor.httpGetSubscriptionData(typesafeComConfig.subscriptionData.url, typesafeComConfig.subscriptionData.timeout, defaultContext)_
+  val activatorInfoEndpoint = ActivatorLatestActor.httpGetActivatorLatest(typesafeComConfig.activatorInfo.url, typesafeComConfig.activatorInfo.timeout, defaultContext)_
+  val httpJsonGetter = JsonGetterActor.httpGetJson(typesafeComConfig.activatorInfo.timeout, defaultContext)_
+  val initState = TypesafeComProxy.initialStateBuilder(authGetter = (_, v, r, w) => AuthenticationActor.props(loginEndpoint, UIActor.props, v, r, w),
+    subscriberDataGetter = (_, v, r, w) => SubscriptionDataActor.props(subscriberEndpoint, UIActor.props, v, r, w),
+    activatorInfoGetter = (_, v, r, w) => ActivatorLatestActor.props(activatorInfoEndpoint, UIActor.props, v, r, w),
+    httpJsonGetter = (req, v, r, w) => JsonGetterActor.props(req.url, httpJsonGetter, req.toPut(_, _, _, true), UIActor.props, v, r, w))
+  val typesafeComActor = activator.Akka.system.actorOf(TypesafeComProxy.props(initialCacheState = initState))
+
   /** Opens a stream for home events. */
   def homeStream =
-    snap.WebSocketActor.create(snap.Akka.system, new snap.HomePageActor, "home-socket-" + homeActorCount.getAndIncrement())
+    activator.WebSocketActor.create(activator.Akka.system, new activator.HomePageActor(typesafeComActor, lookupTimeout), "home-socket-" + homeActorCount.getAndIncrement())
 
   /** The current working directory of the app. */
   val cwd = (new java.io.File(".").getAbsoluteFile.getParentFile)

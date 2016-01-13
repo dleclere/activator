@@ -1,43 +1,76 @@
-//
-// Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
-//
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700|Roboto:400,300,500,700|Open+Sans+Condensed:700";
 
-.title(){
-  font-family: "Open Sans Condensed", sans-serif;
+.font() {
+  font: 400 14px "Roboto", "Helvetica", sans-serif;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.title(@w:700) {
+  font-weight: @w;
+}
+
+.narrow() {
+  font-family: "Open Sans Condensed", "Helvetica", sans-serif;
   font-stretch: condensed;
   font-weight: 700;
 }
 
-// Icons
-@font-face {
-  font-family: 'icons';
-  src: url('/public/icons/entypo.eot');
-  src: url('/public/icons/entypo.ttf') format('truetype'),
-       url('/public/icons/entypo.woff') format('woff'),
-       url('/public/icons/entypo.svg') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
-// Logos
-@font-face {
-  font-family: 'logos';
-  src: url('/public/icons/TypesafeLogos.eot') format('opentype');
-  src: url('/public/icons/TypesafeLogos.ttf') format('truetype'),
-  url('/public/icons/TypesafeLogos.woff') format('woff'),
-  url('/public/icons/TypesafeLogos.svg') format('svg');
-  font-weight: normal;
-  font-style: normal;
+.monospace() {
+  font-family: "Ubuntu Mono", monospace;
+  font-size: 14px;
+  word-break: break-all;
 }
 
-.typo {
-  background: #fff;
-  color: #6F7F89;
-  line-height: 1.3em;
+.typo() {
+  &.page {
+    font: 16.5px/1.6em "Georgia","Times new roman", serif;
+  }
+  p, h1, h2, h3, h4 {
+    margin: 1.5em 0;
+  }
+  // a{
+  //   &[href^="#code"] {
+  //     background: url(/assets/images/icons/doc.svg) 0 center no-repeat;
+  //     padding: 0 0 0 14px;
+  //     margin: 0 3px;
+  //   }
+  // }
+  // p code, pre {
+  //   background: @white-ltr;
+  //   border: 1px solid @white-dkr;
+  //   color: @slate-ltr;
+  //   padding: 0 3px;
+  //   margin: 0 3px;
+  // }
+  // pre {
+  //   margin: 12px -5px;
+  //   padding: 3px 5px;
+  // }
+
+
+
+
+
+
+
+
+
+
+
+
+
   a {
     color: @blue-text;
+    &:hover {
+      text-decoration: underline;
+    }
   }
   a.shortcut {
     white-space: nowrap;
+    line-height: 4px;
     &:before {
       border-radius: 2px;
       padding: 4px;
@@ -47,7 +80,7 @@
       display: inline-block;
       content: url(/public/images/icons/shortcut.svg);
       display: inline-block;
-      vertical-align: top;
+      vertical-align: 3px;
     }
     &:hover:before {
       background: @red;
@@ -55,39 +88,39 @@
   }
   .monospace {
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
-    font-size: 12px;
+    font-size: .9em;
   }
   code {
     .monospace;
+    padding: 0 3px;
+    margin: 0 3px;
   }
   pre {
     .monospace;
-    padding: 0.5em 0;
-    margin-bottom: 1em;
-    border: 1px solid #eee;
-    border-width: 1px 0;
     overflow-x: auto;
+    margin: 12px -5px;
+    padding: 3px 5px;
+  }
+  p code, pre {
+    background: @white-ltr;
+    border: 1px solid @white-dkr;
+    color: @slate-ltr;
   }
   h1, h2, h3 {
     background-color: transparent;
     color: #364550;
     font-weight: 600;
-    padding: 0;
-    margin: 0;
     white-space: nowrap;
   }
   h1 {
-    height: 40px;
     line-height: 40px;
     font-size: 1.4em;
   }
   h2 {
-    height: 30px;
     line-height: 30px;
     font-size: 1.2em;
   }
   h3 {
-    height: 25px;
     line-height: 25px;
     font-size: 1.1em;
   }

@@ -1,0 +1,77 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+.select {
+  border: 1px solid @grey-ltr;
+  border-radius: 3px;
+  &:hover {
+    border-color: @white-dkr;
+  }
+  dt, dd {
+    .ellipsis();
+  }
+  dt {
+    font-weight: inherit;
+    color: inherit;
+    padding: 0 8px 0 18px;
+    position: relative;
+  }
+  .arrows {
+    position: absolute;
+    display: block;
+    left: 5px;
+    top: 1px;
+    width: 9px;
+    height: 20px;
+    g.svg-down-arrow, g.svg-up-arrow {
+      // position: absolute;
+      .transition();
+      g {
+        fill: @grey-ltr;
+      }
+    }
+    g.svg-down-arrow {
+      -webkit-transform: translateY(12px);
+      -moz-transform: translateY(12px);
+      transform: translateY(12px);
+    }
+    g.svg-up-arrow {
+      -webkit-transform: translateY(4px);
+      -moz-transform: translateY(4px);
+      transform: translateY(4px);
+    }
+  }
+  &:hover .arrows {
+    g {
+      fill: @white-dkr;
+    }
+    g.svg-down-arrow {
+      -webkit-transform: translateY(15px);
+      -moz-transform: translateY(15px);
+      transform: translateY(15px);
+    }
+    g.svg-up-arrow {
+      -webkit-transform: translateY(1px);
+      -moz-transform: translateY(1px);
+      transform: translateY(1px);
+    }
+  }
+  dd {
+    margin-top: 1px;
+    background: @slate;
+    min-width: 100%;
+    max-height: 200px;
+    overflow: auto;
+    a {
+      display: block;
+      padding: 4px 10px;
+      .ellipsis();
+      &:hover {
+        background: @blue;
+        color: #fff;
+      }
+    }
+  }
+}

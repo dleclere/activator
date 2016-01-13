@@ -1,0 +1,140 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+@import "../lists/list";
+
+.menu {
+  .column();
+  background: @grey;
+  line-height: 22px;
+  color: #fff;
+
+  header {
+    padding: 0 20px;
+    height: 60px;
+    line-height: 60px;
+    color: @white-dkr;
+    .row();
+    .align-items();
+    h1 {
+      .expand();
+    }
+    .buttons {
+      border-color: @white-dkr;
+      g {
+        .transition();
+        fill: @white-dkr;
+      }
+    }
+    dl, button {
+      border-color: @white-dkr;
+    }
+    dl:hover dt, button:hover {
+      background: @white-dkr;
+      color: @grey-dkr;
+      g {
+        fill: @grey;
+      }
+    }
+    .disabled g {
+      fill: @grey-dkr;
+    }
+  }
+
+  footer {
+    padding: 0 10px;
+    min-height: 35px;
+    line-height: 33px;
+    background: #778C98;
+    color: @white-dkr;
+    border-top: 1px solid rgba(0,0,0,.1);
+    font-size: 12px;
+    .order(11);
+    .row();
+  }
+
+  .list {
+    .list-border-color(@grey-ltr, @grey-dkr-alt);
+    li {
+      &:hover, &.active {
+        background-color: @grey-dkr;
+      }
+      a {
+        color: #fff;
+      }
+    }
+  }
+
+  fieldset {
+    margin: 8px 0;
+    line-height: 16px;
+    label {
+      display: block;
+      color: @grey-text;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    input, select {
+      width: 100%;
+    }
+    input {
+      padding: 4px;
+      background: none;
+      color: #fff;
+      border: 1px solid @grey-dkr;
+    }
+    &.line {
+      label, input, select {
+        width: 50%;
+        float: left;
+      }
+    }
+  }
+
+  .options {
+    padding: 10px;
+    background: #778C98;
+    color: @white-dkr;
+    div {
+      line-height: 30px;
+    }
+    li {
+      padding: 5px 10px
+    }
+    .status {
+      display: inline-block;
+      float: left;
+      .square(30px);
+      background-color: @grey;
+      -webkit-mask: url(/assets/images/icons/console.svg) 5px 5px no-repeat;
+      &.active, &:hover {
+        background: @blue;
+      }
+      &.working {
+        -webkit-animation: 300ms glow infinite alternate linear;
+      }
+    }
+    p {
+      font-size: 12px;
+      text-align: center;
+      text-transform: uppercase;
+      border-top: 1px dotted @grey;
+      color: @white-dkr;
+    }
+  }
+
+  .switch {
+    float: right;
+    margin-top: 3px;
+  }
+
+  .mainAction {
+    display: inline-block;
+    text-align: left;
+    width: 60px;
+  }
+
+}

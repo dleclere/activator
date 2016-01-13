@@ -1,0 +1,139 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+@-webkit-keyframes glowSvg {
+  0% {
+    fill: @grey-ltr;
+  }
+  100% {
+    fill: @grey-dkr;
+  }
+}
+@-moz-keyframes glowSvg {
+  0% {
+    fill: @grey-ltr;
+  }
+  100% {
+    fill: @grey-dkr;
+  }
+}
+@keyframes glowSvg {
+  0% {
+    fill: @grey-ltr;
+  }
+  100% {
+    fill: @grey-dkr;
+  }
+}
+
+#appStatus {
+  .row();
+  .align-items();
+  .justify-content();
+  height: 60px;
+  padding: 6px 0 5px;
+  position: relative;
+  .success, .error {
+    top: 5px;
+    left: 5px;
+    width: 20px;
+    height: 20px;
+    .shape {
+      g {
+        fill: white;
+      }
+    }
+  }
+  .success {
+    .shape {
+      background: @blue;
+    }
+  }
+  .error {
+    .shape {
+      background: @red;
+    }
+  }
+  button {
+    display: inline-block;
+    background: none;
+    position: relative;
+    padding: 4px;
+    .square(30px);
+    line-height: 24px;
+    .cover();
+    border-radius: 3px;
+    .transition();
+    .tooltip {
+      position: absolute;
+      top: 35px;
+      left: 50%;
+      background: @slate-dkr;
+      color: @white-dkr;
+      font-size: 11px;
+      text-transform: uppercase;
+      line-height: 18px;
+      padding: 0 3px;
+      border-radius: 2px;
+      white-space: nowrap;
+      display: none;
+      .transform(translateX(-50%));
+      &:after {
+        .triangle("up", 4px, @slate-dkr);
+        content: " ";
+        position: absolute;
+        top: -4px;
+        left: 50%;
+        .transform(translateX(-50%));
+      }
+    }
+    &:hover {
+      background: @slate-ltr;
+      .tooltip {
+        display: block;
+      }
+    }
+    &.pending, &.working {
+      background: @slate-dkr;
+    }
+    .icon {
+      position: absolute;
+      left: 5px;
+      top: 5px;
+    }
+
+    &.working g {
+      fill: @blue;
+    }
+    &:hover  g {
+      fill: fadeout(@blue, 40%);
+    }
+    &.working:hover  g {
+      fill: @red;
+    }
+    &.disabled {
+      pointer-events: none;
+      cursor: default;
+      opacity: .5;
+      &:hover {
+        background: none !important;
+        .tooltip {
+          display: none;
+        }
+      }
+      .icon g {
+        fill: @grey;
+      }
+    }
+  }
+  .onoff {
+    &:hover  g {
+      fill: fadeout(@red, 60%);
+    }
+    &:active g {
+      fill: @red;
+    }
+  }
+}

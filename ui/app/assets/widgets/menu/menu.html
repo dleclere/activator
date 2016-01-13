@@ -1,0 +1,21 @@
+<nav class="menu">
+  <header>
+    <h1>The Example - A World Climate API</h1>
+    <!-- ko if: __elements.nav -->
+      <div class="buttons">
+        <!-- ko insert: __elements.nav --><!-- /ko -->
+      </div>
+    <!-- /ko -->
+  </header>
+  <!-- ko if: __elements.options -->
+    <div class="options">
+      <!-- ko insert: __elements.options --><!-- /ko -->
+    </div>
+  <!-- /ko -->
+  <!-- ko if: __elements.footer -->
+    <footer>
+      <!-- ko insert: __elements.footer --><!-- /ko -->
+    </footer>
+  <!-- /ko -->  
+  <!-- ko insert: __elements.body --><!-- /ko -->
+</nav>

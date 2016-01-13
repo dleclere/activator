@@ -2,8 +2,8 @@ package test
 
 import org.junit.Assert._
 import org.junit._
-import snap.RootConfigOps
-import snap.AppConfig
+import activator.RootConfigOps
+import activator.AppConfig
 import java.io.File
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -204,7 +204,7 @@ class ConfigTest {
   @Test
   def testUpgradingFromPrevious(): Unit = synchronized {
     import play.api.libs.json._
-    import snap.RootConfig
+    import activator.RootConfig
 
     val oldFile = TestRootConfig.previousUserConfigFile
     val newFile = TestRootConfig.userConfigFile
@@ -232,7 +232,7 @@ class ConfigTest {
   @Test
   def testIgnorePreviousWhenCurrentPresent(): Unit = synchronized {
     import play.api.libs.json._
-    import snap.RootConfig
+    import activator.RootConfig
 
     val oldFile = TestRootConfig.previousUserConfigFile
     val newFile = TestRootConfig.userConfigFile

@@ -1,0 +1,64 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+.pluginBlock {
+  background: #fff;
+  .column();
+  .subheader {
+    .row();
+    h2 {
+      .expand();
+      font-size: 16px;
+    }
+    .group {
+      font-size: 12px;
+      border: none;
+      color: @grey-dkr;
+      .row();
+      label, dl, button, select {
+        .align-self(center);
+        margin: 0 0 0 8px;
+        height: 18px;
+        line-height: 18px;
+        border-radius: 2px;
+      }
+      button {
+        padding: 0 6px;
+      }
+    }
+    button {
+      padding: 2px 4px;
+      background: @grey-dkr;
+      color: @slate-dkr;
+    }
+  }
+  h3 {
+    padding: 0 20px;
+    height: 25px;
+    line-height: 25px;
+    background: @white-dkr;
+    color: @grey-dkr;
+    font-size: 13px;
+    text-transform: uppercase;
+  }
+
+  &.dark {
+    background: @slate;
+    color: @grey;
+    .subheader {
+      background: @slate-dkr;
+      color: #fff;
+      .ellipsis();
+    }
+    h3, .table-wrapper th {
+      background: @grey-dkr;
+      color: @slate-dkr;
+    }
+    td.value {
+      color: @white-dkr;
+    }
+  }
+
+}

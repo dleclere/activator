@@ -8,7 +8,6 @@ import java.awt._
 import javax.swing._
 import java.net.{ URI, URL }
 import sbt.IO
-import com.typesafe.sbtrc.launching.DefaultSbtProcessLauncher
 import activator.properties.ActivatorProperties._
 import xsbti.GlobalLock
 import java.io.IOException
@@ -28,7 +27,7 @@ object PidDetector {
   private def previousPid(lock: GlobalLock): Option[String] =
     lock onBuilder {
       if (ACTIVATOR_PID_FILE.exists)
-        Option(IO.readLines(ACTIVATOR_PID_FILE).head) filterNot (_.isEmpty)
+        IO.readLines(ACTIVATOR_PID_FILE).headOption filterNot (_.isEmpty)
       else None
     }
 
@@ -95,18 +94,12 @@ class UIMain extends AppMain {
     val alreadyRunning = PidDetector.checkRunning(lock)
 
     if (!alreadyRunning) {
-      // Locate the local repo if it exists
-      val optRepositories: Seq[(String, java.io.File, Option[String])] =
-        configuration.provider.scalaProvider.launcher.appRepositories collect {
-          case x: xsbti.IvyRepository if (x.id == "activator-local") && (x.url.getProtocol == "file") =>
-            // Fix UNC path problem on Windows http://www.tomergabel.com/JavaMishandlesUNCPathsOnWindows.aspx
-            var uri: URI = x.url.toURI
-            if (uri.getAuthority != null) uri = new URI(uri.toString.replace("file://", "file:/"))
-            System.err.println("FOUND REPO = " + x.id + " @ " + uri)
-            (x.id, new java.io.File(uri), Some(x.ivyPattern))
-        }
-      // locate sbt details and store in a singleton
-      Global.installSbtLauncher(new DefaultSbtProcessLauncher(configuration, optRepositories = optRepositories))
+      // log which repo we are using
+      configuration.provider.scalaProvider.launcher.appRepositories foreach {
+        case x: xsbti.IvyRepository if (x.id == "activator-local" || x.id == "activator-launcher-local") && (x.url.getProtocol == "file") =>
+          System.out.println("Local repository: " + x.id + " @ " + x.url)
+        case _ =>
+      }
 
       // Start the Play app... (TODO - how do we know when we're done?)
       // TODO - Is this hack ok?
@@ -117,7 +110,7 @@ class UIMain extends AppMain {
       // until we get a OK response code.
       waitForServerStartup()
     } else {
-      System.err.println("Connecting to existing Activator UI server...")
+      System.out.println("Connecting to existing Activator UI server...")
     }
 
     // openBrowser

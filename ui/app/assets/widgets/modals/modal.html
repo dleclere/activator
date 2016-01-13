@@ -1,0 +1,15 @@
+<div class="modal-wrapper" data-bind="attr: {'data-shape': shape}">
+  <header>
+    <h2 data-bind="text: title"></h2>
+  </header>
+  <!-- ko if: text -->
+  <article data-bind="text: text">Text</article>
+  <!-- /ko -->
+  <!-- ko if: body -->
+  <!-- ko include: body --><!-- /ko -->
+  <!-- /ko -->
+  <footer>
+    <button class="light button" data-bind="visible: cancel, text: cancel, enable: cancelEnabled, click: clickCancel"></button>
+    <button class="main button" data-bind="visible: ok, text: ok, enable: okEnabled, click: clickOk"></button>
+  </footer>
+</div>

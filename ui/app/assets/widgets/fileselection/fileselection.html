@@ -10,7 +10,7 @@
 	<!-- /ko -->
 	<div class="listing">
 		<ul data-bind="foreach: currentViewFiles" class="directories">
-			<li data-bind="css: {folder: isDirectory, file: isFile, highlight: highlighted }">
+			<li data-bind="css: {folder: isDirectory, file: isFile, highlight: highlighted }, click: $root.clickDir.bind($root)">
 				<span data-bind="text:name"></span>
 			</li>
 		</ul>

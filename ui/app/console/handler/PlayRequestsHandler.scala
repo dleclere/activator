@@ -29,6 +29,7 @@ object PlayRequestsHandler {
 
   def extractSortOn(sortCommand: Option[String]): PlayStatsSort[_] = sortCommand match {
     case Some(sort) ⇒ sort match {
+      case "path" => PlayStatsSorts.PathSort
       case "time" => PlayStatsSorts.TimeSort
       case "controller" => PlayStatsSorts.ControllerSort
       case "method" => PlayStatsSorts.MethodSort

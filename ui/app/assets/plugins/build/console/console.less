@@ -1,0 +1,47 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../../commons/_base";
+
+.plugin.console {
+  background: @slate;
+  section {
+    .column();
+  }
+  ul {
+    .monospace();
+    width: 100%;
+    color: @grey-ltr;
+    .expand();
+  }
+  li {
+    padding: 8px 15px;
+    border-bottom: 1px solid @slate-ltr;
+    &.result {
+      background: @slate-ltr;
+      color: @white-dkr;
+      span {
+        color: @grey-dkr;
+        &:after {
+          content: "»";
+          color: @blue;
+          padding: 0 10px;
+        }
+      }
+    }
+  }
+
+  .input {
+    border-top: 1px solid @slate-ltr;
+    padding: 4px 4px 1px;
+    textarea {
+      width: 100%;
+      padding: 10px;
+      background: @slate-dkr;
+      .monospace();
+      color: @white-ltr;
+      .placeholder(@slate-ltr);
+      max-height: 300px;
+    }
+  }
+}

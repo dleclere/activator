@@ -2,56 +2,50 @@
  * Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
 require.config({
-  baseUrl:  '/public',
-  paths: {
-    jquery: 'lib/jquery//jquery',
-    ko: 'lib/knockout/knockout',
-    ace: 'lib/ace/src/ace'
-  }
+  baseUrl:  '/public'
 });
 
 var vendors = [
   'lib/jquery/jquery',
-  'lib/knockout/knockout',
+  (window.debug?'lib/knockout/knockout.debug':'lib/knockout/knockout'),
   'css',
   'text',
-  'lib/ace/src/ace',
-  'commons/visibility'
-]
+  'lib/ace/src/ace'
+];
 
 var commons = [
   'commons/templates',
   'commons/effects',
   'commons/utils',
   'commons/settings',
-  'commons/streams',
-  'commons/events'
-]
+  'commons/stream'
+];
 
 var services = [
-    'services/sbt',
-    'services/build',
-    'services/log',
-    'services/tutorial',
-    'services/connection',
-    'widgets/notifications/notifications',
-    'services/typesafe'
-]
+  'services/sbt',
+  'services/typesafe'
+];
 
 var core = [
   'main/view',
   'main/router',
+  'commons/websocket',
   'main/keyboard'
-]
+];
 
 require(vendors, function($, ko) {
   window.ko = ko; // it's used on every page...
   require(commons, function() {
-    require(services, function() {
-      require(core, function(view, router) {
+    require(services, function(sbt) {
+      window.sbt = sbt;
+      require(core, function(view, router, WS) {
+
         view.render();
-        router.load(window.location.hash)
+        router.load(window.location.hash);
+
+        WS.connect();
+
       })
     })
   })
-})
+});

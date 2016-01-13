@@ -5,6 +5,8 @@ import com.typesafe.sbt.packager.Keys.{
   makeBashScript, makeBatScript
 }
 
+import com.typesafe.sbt.packager.universal.UniversalPlugin.autoImport.useNativeZip
+
 import com.typesafe.sbt.license._
 
 package sbt {
@@ -40,9 +42,9 @@ object Packaging {
   val minimalDist = taskKey[File]("dist without the bundled repository and templates")
 
   // This is dirty, but play has stolen our keys, and we must mimc them here.
-  val stage = TaskKey[Unit]("stage")
+  val stage = TaskKey[File]("stage")
   val dist = TaskKey[File]("dist")
-  
+
   // Shared settings to make a local repository.
   def makeLocalRepoSettings(lrepoName: String): Seq[Setting[_]] = Seq(
     localRepo <<= target(_ / "local-repository"),
@@ -59,8 +61,8 @@ object Packaging {
       LicenseReport.dumpReport(LicenseReport(config.licenses, null), println = msg => s.log.info(msg.toString))
     }
   )
-  
-  def settings: Seq[Setting[_]] = packagerSettings ++ useNativeZip ++ makeLocalRepoSettings(localRepoName) ++ Seq(
+
+  def settings: Seq[Setting[_]] = useNativeZip ++ makeLocalRepoSettings(localRepoName) ++ Seq(
     name in Universal := s"activator-${version.value}",
     wixConfig := <wix/>,
     maintainer := "Josh Suereth <joshua.suereth@typesafe.com>",
@@ -72,6 +74,7 @@ object Packaging {
       IO.copy(copies)
       // Now set scripts to executable as a hack thanks to Java's lack of understanding of permissions
       (to / "activator").setExecutable(true, true)
+      to
     },
     dist <<= packageBin in Universal,
     minimalDist := minimalZip((target in Universal).value, (mappings in Universal).value, version.value),
@@ -96,7 +99,7 @@ object Packaging {
     },
     rpmRelease := "1",
     rpmVendor := "typesafe",
-    rpmUrl := Some("http://github.com/scala/scala-dist"),
+    rpmUrl := Some("https://github.com/scala/scala-dist"),
     rpmLicense := Some("BSD"),
 
     repackagedLaunchJar <<= (target, sbtLaunchJar, repackagedLaunchMappings) map repackageJar,
@@ -130,7 +133,7 @@ object Packaging {
       output
     }
   )
-  
+
 
   // TODO - Use SBT caching API for this.
   def repackageJar(target: File, launcher: File, replacements: Seq[(File, String)] = Seq.empty): File = IO.withTemporaryDirectory { tmp =>
@@ -142,15 +145,15 @@ object Packaging {
 
     // Copy new files
     val copys =
-      for((file, path) <- replacements) 
+      for((file, path) <- replacements)
       yield file -> (jardir / path)
     IO.copy(copys, overwrite=true, preserveLastModified=false)
 
-    // Create new launcher jar    
+    // Create new launcher jar
     val tmplauncher = tmp / "activator-launcher.jar"
     val files = (jardir.*** --- jardir) x relativeTo(jardir)
     IO.zip(files, tmplauncher)
-    
+
     // Put new launcher jar in new location.
     val nextlauncher = target / "activator-launcher.jar"
     if(nextlauncher.exists) IO.delete(nextlauncher)
@@ -160,7 +163,7 @@ object Packaging {
 
   def copyBashTemplate(from: File, to: File, version: String): File = {
     val fileContents = IO read from
-    val nextContents = fileContents.replaceAll("""\$\{\{template_declares\}\}""", 
+    val nextContents = fileContents.replaceAll("""\$\{\{template_declares\}\}""",
                                                """|declare -r app_version="%s"
                                                   |""".stripMargin format (version))
     IO.write(to, nextContents)
@@ -184,6 +187,10 @@ object Packaging {
     val tprops = tdir / (name + ".properties")
     // TODO - better caching
     // TODO - Add a local repository for resolving...
+    // NOTE if someone has ever run Activator before, we'll have created
+    // an ~/.sbt/repositories which means the entire [repositories] section
+    // below will be ignored. So the repositories section is purely
+    // for our first startup.
     if(!tprops.exists) IO.write(tprops, """
 [scala]
   version: ${sbt.scala.version-auto}
@@ -198,10 +205,10 @@ object Packaging {
 
 [repositories]
   local
-  activator-local: file://${activator.local.repository-${activator.home-${user.home}/.activator}/repository}, [organization]/[module]/(scala_[scalaVersion]/)(sbt_[sbtVersion]/)[revision]/[type]s/[artifact](-[classifier]).[ext]
+  activator-launcher-local: file://${activator.local.repository-${activator.home-${user.home}/.activator}/repository}, [organization]/[module]/(scala_[scalaVersion]/)(sbt_[sbtVersion]/)[revision]/[type]s/[artifact](-[classifier]).[ext]
   maven-central
-  typesafe-releases: http://repo.typesafe.com/typesafe/releases
-  typesafe-ivy-releasez: http://repo.typesafe.com/typesafe/ivy-releases, [organization]/[module]/(scala_[scalaVersion]/)(sbt_[sbtVersion]/)[revision]/[type]s/[artifact](-[classifier]).[ext]
+  typesafe-releases: https://repo.typesafe.com/typesafe/releases
+  typesafe-ivy-releasez: https://repo.typesafe.com/typesafe/ivy-releases, [organization]/[module]/(scala_[scalaVersion]/)(sbt_[sbtVersion]/)[revision]/[type]s/[artifact](-[classifier]).[ext]
 
 [boot]
  directory: ${sbt.boot.directory-${sbt.global.base-${user.home}/.sbt}/boot/}

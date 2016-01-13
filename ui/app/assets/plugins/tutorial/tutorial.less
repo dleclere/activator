@@ -1,70 +1,49 @@
 /*
- Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
  */
-@import '../../commons/_base.less';
+@import "../../commons/_base";
 
 .tutorial {
-  background: #fff;
-  nav {
-    header {
-      background: none;
-    }
-    .nextPrev {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-    }
-    button {
-      border: 1px solid @white-dkr;
-      background: url(/public/images/prevNext.svg) no-repeat;
-      width: 27px;
-      height: 24px;
-      line-height: 15px;
-      color: @white-dkr;
-      font-weight: 900;
-      font-size: 14px;
-      &.disabled {
-        pointer-events: none;
-        color: @grey-ltr;
-      }
-      &.prev {
-        border-radius: 2px 0 0 2px;
-        border-right: none;
-        background-position: -30px 0;
-        &.disabled {
-          background-position: -30px -30px;
-        }
-      }
-      &.next {
-        border-radius: 0 2px 2px 0;
-        background-position: 0 0;
-        &.disabled {
-          background-position: 0 -30px;
-        }
-      }
-    }
+  .page {
+    background: #fff;
+    .typo();
+    padding: 0 14px;
   }
-  > header {
-    position: absolute;
-    height: 60px;
-    top: 0;
-    left: @menu-width;
-    right: 0;
-    padding: 10px 15px;
+}
+.tutorial .intro {
+  .author {
+    color: @slate;
+    margin: 15px 0 5px;
   }
-  article {
-    padding: 10px 20px;
-    width: 100%;
-    overflow: auto;
-  }
-  span.tutorialreload {
-    font-size: 1.0em;
-    cursor: hand;
-    cursor: pointer;
+  .training {
+    padding: 20px;
+    overflow: hidden;
+    background: @slate;
+    color: @grey-ltr;
+    h3 {
+      font-size: 18px;
+      margin: 8px 0 5px;
+    }
+    img {
+      background: #fff;
+      margin: 0 20px 0 0;
+      float: left;
+      width: 105px;
+      margin: 10px;
+    }
   }
 }
 
-#noTutorial {
+.tutorial .menu header .buttons button svg {
+  vertical-align: 0px;
+  margin: 0;
+}
+
+.tutorial .menu li {
+  .ellipsis();
+}
+
+.tutorial .no-tutorial {
   position: absolute;
   .trbl(0);
   margin: auto;
@@ -81,6 +60,25 @@
   }
 }
 
-#noTutorialPannel {
-  padding: 20px;
+.tutorial button[data-exec] {
+  padding: 0 10px 0 2px;
+  border-radius: 10px;
+  background: @blue;
+  color: white;
+  font-weight: bold;
+  display: inline-block;
+  height: 19px;
+  &:before {
+    border-radius: 10px;
+    display: inline-block;
+    content: ">";
+    height: 15px;
+    width: 15px;
+    background: white;
+    color: @blue;
+    margin-right: 4px;
+  }
+  &:hover {
+    background: @blue-text;
+  }
 }

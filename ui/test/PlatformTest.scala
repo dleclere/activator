@@ -1,4 +1,4 @@
-package snap
+package activator
 
 import org.junit._
 

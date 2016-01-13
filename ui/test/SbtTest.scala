@@ -15,7 +15,7 @@ import play.api.http._
 import scala.concurrent.{ Await, Future }
 import akka.util.Timeout
 import java.util.concurrent.TimeUnit
-import snap.AppManager
+import activator.AppManager
 import activator.ProcessResult
 import activator.ProcessSuccess
 import activator.ProcessFailure
@@ -39,27 +39,28 @@ class SbtTest {
     Await.result(AppManager.loadAppIdFromLocation(location), timeout.duration)
   }
 
-  // the "body" and "Writeable" args are a workaround for
-  // https://play.lighthouseapp.com/projects/82401/tickets/770-fakerequestwithjsonbody-no-longer-works
-  // TODO drop this hack when upgrading past Play 2.1-RC1
-  private def routeThrowingIfNotSuccess[B](req: FakeRequest[_], body: B)(implicit w: Writeable[B]): Result = {
-    route(req, body) map deAsync match {
+  private def routeThrowingIfNotSuccess[B](req: FakeRequest[B])(implicit w: Writeable[B]): Result = {
+    route(req) map deAsync match {
       case Some(result) if result.header.status == Status.OK => result
+      case Some(result) =>
+        throw new RuntimeException(s"got back error code ${result.header.status}: ${contentAsString(Future.successful(result))(timeout)}")
       case None =>
         throw new RuntimeException("got None back from request: " + req)
     }
   }
 
-  private def routeExpectingAnError[B](req: FakeRequest[_], body: B)(implicit w: Writeable[B]): String = {
-    route(req, body) map deAsync match {
+  private def routeExpectingAnError[B](req: FakeRequest[B])(implicit w: Writeable[B]): String = {
+    route(req) map deAsync match {
       case Some(result) if result.header.status != Status.OK => contentAsString(Future.successful(result))(timeout)
+      case Some(result) =>
+        throw new RuntimeException(s"got back unexpected success ${result.header.status}: ${contentAsString(Future.successful(result))(timeout)}")
       case None =>
         throw new RuntimeException("got None back from request: " + req)
     }
   }
 
-  private def routeThrowingIfNotJson[B](req: FakeRequest[_], body: B)(implicit w: Writeable[B]): JsValue = {
-    val result = routeThrowingIfNotSuccess(req, body)
+  private def routeThrowingIfNotJson[B](req: FakeRequest[B])(implicit w: Writeable[B]): JsValue = {
+    val result = routeThrowingIfNotSuccess(req)
     if (contentType(Future.successful(result))(timeout) != Some("application/json"))
       throw new RuntimeException("Wrong content type: " + contentType(Future.successful(result))(timeout))
     Json.parse(contentAsString(Future.successful(result))(timeout))
@@ -73,16 +74,13 @@ class SbtTest {
         case whatever => throw new RuntimeException("bad result, got: " + whatever)
       }
 
-      val runJson = JsObject(Seq("appId" -> JsString(appId),
-        "taskId" -> JsString("test-" + projectName + "-task-id"),
-        "description" -> JsString(projectName + " Test"),
-        "task" -> JsObject(Seq("type" -> JsString("GenericRequest"), "name" -> JsString("run")))))
+      val runJson = Json.obj("command" -> "run")
 
-      val runReq = FakeRequest(method = "POST", uri = "/api/sbt/task", body = AnyContentAsJson(runJson),
+      val runReq = FakeRequest(method = "POST", uri = "/api/sbt/requestExecution", body = AnyContentAsJson(runJson),
         headers = FakeHeaders(Seq(
           HeaderNames.CONTENT_TYPE -> Seq("application/json; charset=utf-8"))))
 
-      val taskJson = routeThrowingIfNotJson(runReq, runJson)
+      val taskJson = routeThrowingIfNotJson(runReq.withBody(runJson))
 
       assertions(taskJson)
     }
@@ -113,17 +111,23 @@ class SbtTest {
     }
   }
 
-  @Test
+  // This needs to be ported to sbt server, which will imply doing something with the
+  // websocket. We may instead move this test over into JavaScript so we also test
+  // our JavaScript client code.
+  //@Test
   def testRunChild(): Unit = {
     childTest(makeDummySbtProject, "runChild") { taskJson =>
       printOnFail(taskJson) {
         assertEquals(JsString("RequestReceivedEvent"), taskJson \ "type")
-        // TODO somehow we need to test that the websocket gets a RunReponse
+        // TODO somehow we need to test that the websocket gets a RunResponse
       }
     }
   }
 
-  @Test
+  // This needs to be ported to sbt server, which will imply doing something with the
+  // websocket. We may instead move this test over into JavaScript so we also test
+  // our JavaScript client code.
+  //@Test
   def testRunChildBrokenBuild(): Unit = {
     childTest(makeDummySbtProjectWithBrokenBuild, "runChildBrokenBuild") { taskJson =>
       printOnFail(taskJson) {
@@ -133,7 +137,10 @@ class SbtTest {
     }
   }
 
-  @Test
+  // This needs to be ported to sbt server, which will imply doing something with the
+  // websocket. We may instead move this test over into JavaScript so we also test
+  // our JavaScript client code.
+  //@Test
   def testRunChildMissingMain(): Unit = {
     childTest(makeDummySbtProjectWithNoMain, "runChildMissingMain") { taskJson =>
       printOnFail(taskJson) {
@@ -151,7 +158,7 @@ class SbtTest {
       def getHistory(): Seq[String] = {
         val getReq = FakeRequest(method = "GET", uri = "/api/app/history", body = AnyContentAsJson(Json.obj()),
           headers = FakeHeaders(Nil))
-        val result = routeThrowingIfNotJson(getReq, AnyContentAsJson(Json.obj()))
+        val result = routeThrowingIfNotJson(getReq.withBody(AnyContentAsJson(Json.obj())))
         result match {
           case JsArray(apps) =>
             apps map { app =>
@@ -179,7 +186,7 @@ class SbtTest {
         body = AnyContentAsJson(Json.obj()),
         headers = FakeHeaders(Nil))
 
-      routeThrowingIfNotSuccess(forgetReq, AnyContentAsJson(Json.obj()))
+      routeThrowingIfNotSuccess(forgetReq.withBody(AnyContentAsJson(Json.obj())))
 
       assertTrue("forgotten app is no longer in the history", !getHistory().contains("appToForget"))
     }

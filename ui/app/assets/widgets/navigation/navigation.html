@@ -1,52 +1,45 @@
-    <nav id="navigation" data-bind="event: {mouseover: sneakShow, mouseout: sneakHide}">
-
-      <dl id="switch" class="dropdown">
-        <dt data-bind="text: build.app.name, attr: { title: build.app.name }"></dt>
-        <dd>
-          <a class="new-app button" href="/home">Manage applications</a>
-          <!-- ko foreach:serverAppModel.recentApps -->
-          <a class="new-app" data-bind="text: cachedName, attr: {href: '/app/'+id}"></a>
-          <!-- /ko -->
-        </dd>
-      </dl>
-
-      <div id="appStatus">
-        <button class="running" data-bind="click: build.onToggleRun, css: {active: build.activity.running, working: build.activity.busy() && !build.activity.running() }"></button>
-        <span class="tooltip running" data-bind="text: build.statusTooltips.run "></span>
-        <button class="refresh" data-bind="toggle: build.settings.recompileOnChange, css: {active: build.settings.recompileOnChange }"></button>
-        <span class="tooltip refresh" data-bind="text: build.settings.recompileOnChange() ? 'Rebuild on file changes enabled':'Rebuild on file changes disabled' "></span>
-        <button class="console" data-bind="toggle: build.settings.automaticResetInspect, css: {active: build.settings.automaticResetInspect}"></button>
-        <span class="tooltip console" data-bind="text: build.settings.automaticResetInspect() ? 'Automatic resetting of Inspect enabled':'Automatic resetting of Inspect disabled' "></span>
-        <button class="testing" data-bind="toggle: build.settings.retestOnSuccessfulBuild, css: {active: build.settings.retestOnSuccessfulBuild}"></button>
-        <span class="tooltip testing" data-bind="text: build.settings.retestOnSuccessfulBuild() ? 'Test on rebuild enabled':'Test on rebuild disabled' "></span>
-      </div>
-
-      <dl id="rockets">
-        <dt>Learn</dt>
-        <dd>
-          <a data-bind="attr: { href: '#tutorial' }, isActiveUrl: '#tutorial'">Tutorial</a>
-        </dd>
-        <dt>Develop</dt>
-        <dd>
-          <a data-bind="attr: { href: '#code' }, isActiveUrl: '#code'">Code</a>
-          <a data-bind="attr: { href: '#compile' }, isActiveUrl: '#compile'">Compile <span class="working"
-            data-bind="visible: build.activity.compiling"></span><span class="counter"
-            data-bind="text: build.errors.compile().length, visible: build.errors.compile().length > 0"></span></a>
-          <a href="#test" data-bind="isActiveUrl: '#test'">Test <span class="working"
-            data-bind="visible: build.activity.testing"></span><span class="counter"
-            data-bind="text: build.errors.test().length, visible: build.errors.test().length > 0"></span></a>
-          <a href="#run" data-bind="isActiveUrl: '#run'">Run <span class="working"
-            data-bind="visible: build.activity.launching"></span><span class="counter"
-            data-bind="text: build.errors.run().length, visible: build.errors.run().length > 0"></span></a>
-          <a href="#inspect" data-bind="isActiveUrl: '#inspect'">Inspect <span class="working"
-            data-bind="visible: build.activity.inspecting"></span><span class="counter"
-            data-bind="text: build.errors.inspect().length, visible: build.errors.inspect().length > 0"></span></a>
-        </dd>
-      </dl>
-      <div id="typesafe">
-        <a href="http://typesafe.com" target="_blank" class="website">
-          <img src="/public/images/typesafe.svg">
-        </a>
-        <a href="#" class="infos">i</a>
-      </div>
-    </nav>
+<nav id="navigation">
+  <!-- ko include: appManager --><!-- /ko -->
+  <!-- ko include: appStatus --><!-- /ko -->
+  <dl id="rockets">
+    <dt>Learn</dt>
+    <dd>
+      <a data-bind="href: '#tutorial', isActiveUrl: '#tutorial'">
+        Tutorial
+      </a>
+    </dd>
+    <dt>Develop</dt>
+    <dd>
+      <a data-bind="memorizeLinks: '#build', isActiveUrl: '#build'">
+        Build
+        <span class="stamp" data-bind="visible: workingTasks.compile()"></span>
+        <span class="stamp building" data-bind="visible: building"></span>
+        <span class="counter" data-bind="text: counters.build, visible: counters.build()"></span>
+      </a>
+      <a data-bind="memorizeLinks: '#code', isActiveUrl: '#code'">
+        Code
+        <span class="counter" data-bind="text: counters.code, visible: counters.code(), click: showFirstCompileError"></span>
+      </a>
+      <a data-bind="memorizeLinks: '#run', isActiveUrl: '#run'">
+        Run
+        <span class="stamp" data-bind="visible: workingTasks.run()"></span>
+        <span class="counter" data-bind="text: counters.run, visible: counters.run()"></span>
+      </a>
+      <a data-bind="memorizeLinks: '#test', isActiveUrl: '#test'">
+        Test
+        <span class="stamp" data-bind="visible: workingTasks.test()"></span>
+        <span class="counter" data-bind="text: counters.test, visible: counters.test()"></span>
+      </a>
+    </dd>
+    <dt>Deliver</dt>
+    <dd>
+      <a data-bind="memorizeLinks: '#monitoring', isActiveUrl: '#monitoring'">
+        Monitor
+      </a>
+      <a data-bind="memorizeLinks: '#partners', isActiveUrl: '#partners'">
+        Partners
+      </a>
+    </dd>
+  </dl>
+  <!-- ko include: typesafe --><!-- /ko -->
+</nav>

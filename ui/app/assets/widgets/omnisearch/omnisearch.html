@@ -1,0 +1,17 @@
+<form id="omnisearch" data-bind="submit: function(){}">
+  <input type="text" name="keywords" placeholder="Type a command or keywords" autocomplete="off" data-bind="value: searchString, valueUpdate: 'afterkeydown', event: {'keyup': keyUp,'keydown': keyDown,'focus': focus,'blur': blur}">
+  <ul data-bind="css: {active: active, empty: empty}, foreach: options">
+    <!-- ko if: $data.heading -->
+    <li class="heading" data-bind="text: heading"></li>
+    <!-- /ko -->
+    <!-- ko if: $data.type -->
+    <li class="option" data-bind="click: function(opt){ $root.exec(opt); }, css: {selected: $root.selected() && subtitle == $root.selected().subtitle }">
+      <span class="title" data-bind="text: title || execute"></span>
+      <!-- ko if: !!$data.redirected -->
+        <span class="redirected" data-bind="text: redirected"></span>
+      <!-- /ko -->
+    </li>
+    <!-- /ko -->
+  </ul>
+  <span class="spinner" data-bind="visible: pendingQueries"></span>
+</form>

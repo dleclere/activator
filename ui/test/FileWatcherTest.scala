@@ -10,7 +10,7 @@ import akka.actor._
 import scala.concurrent._
 import scala.concurrent.duration._
 import akka.pattern._
-import snap.SetFilesToWatch
+import activator.SetFilesToWatch
 import akka.util.Timeout
 
 class FileWatcherTest {
@@ -30,10 +30,10 @@ class FileWatcherTest {
     val system = ActorSystem("fileWatch")
 
     try {
-      val watcher = system.actorOf(Props(new snap.FileWatcher))
+      val watcher = system.actorOf(Props(new activator.FileWatcher))
 
       val observer = system.actorOf(Props(new Actor() with ActorLogging {
-        watcher ! snap.SubscribeFileChanges(self)
+        watcher ! activator.SubscribeFileChanges(self)
         watcher ! SetFilesToWatch(Set(source))
 
         var changeObserver: Option[ActorRef] = None
@@ -45,7 +45,7 @@ class FileWatcherTest {
             // (does not on Linux)
             source.setLastModified(old + 1000)
             changeObserver = Some(sender)
-          case snap.FilesChanged(ref) =>
+          case activator.FilesChanged(ref) =>
             changeObserver.foreach(_ ! "changed")
         }
       }));

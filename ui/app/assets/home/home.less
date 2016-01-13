@@ -2,24 +2,18 @@
  * Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
 
-// @import "/public/fonts/font-faces.css";
 @import '../commons/_reset.less';
 @import '../commons/_base.less';
 
-
-.title(){
-  letter-spacing: -0.03em;
-  font-weight: 600;
+html, body {
+  overflow: hidden;
 }
 
 body {
-  font: 13px "Open Sans", sans-serif;
+  .font();
   background: @slate url("/public/images/home.svg") no-repeat;
   background-size: cover;
-  color: #D3D9DF;
-}
-html, body {
-  overflow: auto;
+  color: @grey;
 }
 
 #logo {
@@ -34,48 +28,47 @@ html, body {
   display: none;
 }
 
-h2 {
-  height: 40px;
-  line-height: 40px;
-  padding: 0 20px;
-  background: #fff;
-  color: #333;
-  font-size: 15px;
-  font-weight: 600;
-  border-bottom: 1px solid #D8D8D8;
-  &:before {
-    content: "↓";
-    color: rgba(0,0,0,.3);
-    padding: 0 10px 0 0 ;
-    font-size: 12px;
+a, button {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+a {
+  color: @blue-dkr;
+}
+
+section {
+  h2 {
+    font-size: 16px;
+    line-height: 50px;
+    padding: 0 15px;
+    font-weight: 500;
   }
-}
 
-h3 {
-  .title();
-  font-size: 30px;
-  color: #28353F;
-}
+  h3 {
+    font-size: 22px;
+    color: #28353F;
+  }
 
-h4 {
-  .title();
-  font-size: 15px;
-  color: #28353F;
-}
+  h4 {
+    font-size: 15px;
+    color: #28353F;
+  }
 
-.button {
-  display: block;
-  margin: 20px auto;
-  padding: 7px 10px;
-  width: 220px;
-  background: #e25758;
-  color: #fff;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 500;
-  border-radius: 3px;
-  border: 0;
-    cursor: pointer;
+  .button {
+    display: block;
+    margin: 20px auto;
+    padding: 7px 10px;
+    width: 220px;
+    background: #e25758;
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    border-radius: 3px;
+    border: 0;
+      cursor: pointer;
+  }
 }
 
 p.path {
@@ -91,12 +84,12 @@ p.path {
 section {
   position: absolute;
   top: 100px;
-  bottom: 50px;
+  bottom: 40px;
   background: #F5F5F5;
   box-shadow: 0 2px 10px rgba(0,0,0,.6);
   color: #6F7F89;
   overflow: hidden;
-
+  border-radius: 3px;
   p {
     margin: 1em 0;
   }
@@ -113,41 +106,15 @@ section {
   }
 }
 
-#license {
-  display: block;
-  left: 70px;
-  width: 700px;
-  .w {
-    position: absolute;
-    top: 40px;
-    left: 0;
-    right: 0;
-    bottom: 100px;
-  }
-
-  iframe {
-    width: 100%;
-    height: 100%;
-  }
-  .button {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 10px;
-  }
-  p {
-    margin: 10px 20px;
-  }
-  .accepted & {
-    display: none;
-  }
-}
-
 #working {
-  left: 70px;
-  right: 70px;
+  left: 40px;
+  right: 40px;
   display: none;
   article {
+    position: absolute;
+    top: 50px;
+    right: 0; bottom: 0; left: 0;
+    height: auto;
     padding: 0 15px;
   }
   .logs {
@@ -155,18 +122,51 @@ section {
   }
 }
 
-#open {
-  left: 69%;
-  width: 26%;
-}
-
 #new {
-  left: 5%;
-  right: 36%;
+  left: 40px;
+  right: 360px;
+  .row();
+
   article {
-    top: 40px;
-    border-top: 1px solid #ddd;
+    .column();
+    height: 100%;
   }
+
+  .tabs {
+    width: 175px;
+    background: @grey-ltr;
+    .column();
+    h3 {
+      padding: 10px;
+      color: @grey-text;
+    }
+    a {
+      display: block;
+      cursor: pointer;
+      padding: 10px;
+      color: #fff;
+      font-size: 14px;
+      text-decoration: none;
+      &:hover {
+        background: @grey;
+      }
+      &.active {
+        background: @blue;
+      }
+    }
+  }
+  .half {
+    .expand();
+    width: 50%;
+    position: relative;
+    background: #fff;
+    height: 100%;
+  }
+  .half.right {
+    border-left: 1px solid #ddd;
+    padding: 10px;
+  }
+
   li.template {
     .ellipsis();
     &:before {
@@ -195,15 +195,6 @@ section {
 header {
   background: white;
   box-shadow: 0 2px 3px rgba(0,0,0,.1), 0 -2px 3px rgba(0,0,0,.1);
-}
-
-article {
-  position: absolute;
-  top: 40px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: auto;
 }
 
 .list {
@@ -259,20 +250,6 @@ article {
   }
 }
 
-.half {
-  width: 50%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    &.right {
-      left: 50%;
-      border-left: 1px solid #d8d8d8;
-      padding: 20px;
-      background: white;
-    }
-}
-
 .template {
   position: absolute;
   top: 0;
@@ -287,33 +264,7 @@ article {
   }
 }
 
-#templatePage {
-  .templatelist {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    left: 20px;
-    bottom: 20px;
-  }
-  ul {
-    position: absolute;
-    bottom: 135px;
-    right: 470px;
-    list-style: none;
-    li {
-      list-style: none;
-    }
-
-  }
-  .tagfilter {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 430px;
-  }
-}
-
-#welcome {
+.welcome {
   counter-reset: steps;
   .steps {
     li {
@@ -363,10 +314,9 @@ article {
       background: #53CDED;
       color: #fff;
       text-transform: uppercase;
-      padding: 1px 3px;
-      margin: 1px;
-      font-size: 12px;
-      font-weight: 500;
+      padding: 0 4px 1px;
+      font-size: 11px;
+      font-weight: 300;
     }
   }
   .author {
@@ -423,39 +373,13 @@ article {
     line-height: 24px;
     border-radius: 3px;
   }
-  #browseAppLocation:after {
+  #browseAppLocation {
     float: right;
-    content: "\1F4C1";
-    color: #e25758;
-    font: 20px icons;
-    line-height: 30px;
-    text-align: center;
-    vertical-align: middle;
     margin-left: 5px;
     display: inline-block;
     width: 30px;
     height: 30px;
-  }
-}
-
-#openAppForm {
-  position: absolute;
-  background: #f5f5f5;
-  top: 40px;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  li {
-    position: relative;
-    a:after {
-      content: " ";
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-    }
+    background: url("/public/icons/folder-red.svg") center center no-repeat;
   }
 }
 
@@ -483,25 +407,6 @@ article {
           color: #e25758;
       }
     }
-  }
-}
-
-#openButton {
-  float: right;
-  display: block;
-  width: 60px;
-  height: 39px;
-  border: 0;
-  border-left: 1px solid #D8D8D8;
-  background: white;
-  color: rgb(226, 87, 88);
-  font: 20px icons;
-  line-height: 30px;
-  text-align: center;
-  vertical-align: middle;
-  &.opened {
-    background: #E25758;
-    color: white;
   }
 }
 
@@ -550,7 +455,7 @@ article {
       display: block;
     }
     .name {
-      .title();
+      font-weight: 500;
       font-size: 14px;
       color: #28353F;
     }
@@ -571,7 +476,7 @@ article {
 
   header {
     background: #53cdec;
-    .title();
+    font-weight: 600;
     font-size: 22px;
     color: #fff;
     line-height: 40px;
@@ -585,7 +490,7 @@ article {
         border-bottom: 1px solid #e9ecef;
       > a {
         padding: 15px 20px;
-        .title();
+        font-weight: 600;
         font-size: 18px;
         display: block;
         background: url(/public/images/arrow.png) 350px center no-repeat;
@@ -689,8 +594,9 @@ article {
 
 #filter {
   position: relative;
-  padding: 10px 10px 10px 40px;
-  background: url(/public/images/icons/search.svg) 12px center no-repeat;
+  padding: 9px 10px 10px 40px;
+  border-top: 1px solid #ddd;
+  background: @white-ltr url(/public/images/icons/search.svg) 12px center no-repeat;
   input {
     width: 100%;
     background: transparent;
@@ -732,18 +638,11 @@ article {
 }
 
 
-#openButton {
-  line-height: 37px;
-  cursor: pointer;
-  &.opened {
-    background-color: @red !important;
-    color: #fff !important;
-  }
-}
-
 @media (max-width: 1023px) {
+  html, body {
+    overflow: auto;
+  }
   body {
-    overflow: visible;
     padding-bottom: 40px;
   }
   #license {
@@ -755,30 +654,6 @@ article {
     width: auto;
   }
 
-  #open {
-    margin: 20px auto;
-    width: 700px;
-    height: 210px;
-    position: relative;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-  #openAppForm {
-    margin: 0 auto;
-    width: 700px;
-    height: 170px;
-  }
-  #openAppLocationBrowser {
-    .fileselection {
-      position: relative;
-      top: 0;
-      height: 170px;
-      overflow-y: auto;
-    }
-  }
-
   #new {
     margin: 100px auto 20px auto;
     width: 700px;
@@ -788,18 +663,19 @@ article {
     left: 0;
     right: 0;
     bottom: 0;
+    > div {
+      .expand(1);
+      width: 50%;
+    }
   }
 
-  .half {
-    float: left;
-  }
   ul.list {
     max-height: 420px;
   }
   #filter {
     position: relative;
   }
-  #welcome {
+  .welcome {
     background-color: white;
     height: 500px;
   }
@@ -841,31 +717,52 @@ article {
 .tabs {
   overflow: hidden;
   h2 {
-    width: 50%;
-    float: left;
-    color: #666;
-    cursor: pointer;
-    text-align: center;
-    border-left: 1px solid #eee;
-    border-bottom: 3px solid #ccc;
-    &.active {
-      color: @blue-text;
-      border-bottom: 3px solid @blue;
-    }
-    &:before {
-      content: none;
-    }
+    color: #28353F;
+  }
+
+}
+
+#templateList, #seedList, #trpList {
+  .list {
+    border-top: 1px solid #ddd;
+    .expand();
+    height: 400px; // Default value for IE11
+    overflow: auto;
   }
 }
 
-#templateList {
-  .list {
-    position: absolute;
-    top: 40px;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    border-top: 1px solid #ddd;
-    overflow: auto;
+
+#trpLicense {
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(255,255,255,.6);
+  color: @grey;
+  font-size: 16px;
+  div {
+    background: @slate;
+    padding: 40px;
+    margin: 140px auto;
+    width: 700px;
+  }
+  li:before {
+    content: "•";
+    color: @grey-dkr;
+    padding: 0 9px;
+  }
+  h1 {
+    color: #fff;
+    text-align: center;
+    font-size: 25px;
+  }
+  a {
+    color: @blue;
+  }
+  .button {
+    display: inline-block;
+    margin: 10px ;
   }
 }

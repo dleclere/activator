@@ -1,49 +1,88 @@
 /*
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
-define(['text!./welcome.html', 'css!./welcome.css'], function(template, css){
+define([
+  'services/sbt',
+  'services/typesafe',
+  'text!./welcome.html',
+  'commons/settings',
+  'widgets/layout/layout',
+  'widgets/layout/layoutManager',
+  'css!./welcome.css'
+], function(
+  sbt,
+  typesafe,
+  tpl,
+  settings,
+  layout,
+  layoutManager
+){
 
+  var presentationModeStyle = (function() {
+    var added = false;
+    var cssStr = ".presentation-mode .tutorial .page, .presentation-mode .build .logs, .presentation-mode .run .pluginBlock, .presentation-mode .code .editor, .presentation-mode .monitoring .tabs-step { zoom: 161% !important; }";
+    var style;
+
+    try {
+      // Create the <style> tag
+      style = document.createElement("style");
+      style.appendChild(document.createTextNode(cssStr));
+    } catch(e){
+      style = undefined;
+    }
+
+    return function() {
+      if (!added && style) {
+        document.head.appendChild(style);
+        added = true;
+      }
+    }
+  }());
 
   var WelcomeState = (function(){
     var self = {};
 
-    self.appVersion = window.serverAppVersion
-    self.newsHtml = ko.observable('<div></div>');
+    self.remoteAppVersion = typesafe.getActivatorInfo();
+    self.appVersion = window.serverAppVersion;
+    self.currentStatus = sbt.events.appStatus;
 
-    self.loadNews = function() {
-      var areq = {
-          url: "http://downloads.typesafe.com/typesafe-activator/" + window.serverAppVersion + "/news.js",
-          type: 'GET',
-          // this is hardcoded for now since our server is just static files
-          // so can't respect a ?callback= query param.
-          jsonpCallback: 'setNewsJson',
-          dataType: 'jsonp' // return type
-        };
-        debug && console.log("sending ajax news request ", areq)
-        return $.ajax(areq);
-    }
-    self.setNewsJson = function(json) {
-      debug && console.log("setting news json to ", json);
-      if ('html' in json) {
-        this.newsHtml(json.html);
-      } else {
-        console.error("json does not have an html field");
+    self.trp = sbt.tasks.reactivePlatform.platformRelease;
+
+    self.presentationMode = settings.observable("presentationMode", false);
+
+    self.newVersion = ko.computed(function (){
+      var info = self.remoteAppVersion();
+      var result = false;
+      if (info && info.type === "activatorInfo") {
+        if (info.data.version !== window.serverAppVersion) {
+          result = true;
+        }
       }
-    }
+      return result;
+    });
 
-    self.loadNews();
+    ko.computed(function() {
+      var on = self.presentationMode();
+      if (on) {
+        document.body.style.zoom = "75%";
+        document.body.classList.add("presentation-mode");
+        presentationModeStyle();
+      } else {
+        document.body.style.zoom = "1";
+        document.body.classList.remove("presentation-mode");
+      }
+      layoutManager.panelOpenedSet(false);
+      layoutManager.navigationOpened(!on);
+      return;
+    });
+
     return self;
   }());
 
-  window.setNewsJson = WelcomeState.setNewsJson.bind(WelcomeState);
-
   return {
     render: function() {
-      var $welcome = $(template)[0];
-      ko.applyBindings(WelcomeState, $welcome);
-      return $welcome;
-    },
-    route: function(){}
+      layout.renderPlugin(ko.bindhtml(tpl, WelcomeState));
+    }
   }
 
 });

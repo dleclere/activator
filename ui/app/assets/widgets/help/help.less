@@ -1,0 +1,97 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+#help {
+  font-size: 14px;
+  line-height: 15px;
+  dt {
+    font-size: 25px;
+    color: @grey;
+  }
+  dd {
+    width: 450px;
+    padding-bottom: 20px;
+  }
+  .group {
+    border-bottom: 1px solid @slate-dkr;
+    padding: 10px 10px 0 50px;
+    background: url(/assets/images/header/typesafe.png) 20px 20px no-repeat;
+    &.documentation {
+      background-image: url(/assets/images/header/documentation.png);
+    }
+    &.community {
+      background-image: url(/assets/images/header/community.png);
+    }
+    a {
+      display: inline-block;
+      &:hover {
+        background: none;
+      }
+    }
+  }
+  h4 {
+    font-size: 16px;
+    color: @blue;
+  }
+}
+
+
+.hint {
+  text-align: center;
+  width: 400px;
+  margin: 100px auto;
+  padding-top: 120px;
+  color: @grey-text;
+  p {
+    font-size: 20px;
+    margin: 0 0 20px 0;
+  }
+  a {
+    color: @grey-text;
+    text-decoration: underline;
+  }
+  button {
+    background: none;
+    border: 1px solid @grey-dkr;
+    color: @grey-text;
+    padding: 3px 10px;
+    border-radius: 3px;
+    &:hover {
+      border: 1px solid @grey-text;
+      background: @grey-text;
+      color: #fff;
+    }
+  }
+  background: url(/assets/icons/screen-help.svg) center top no-repeat;
+  &.no-data {
+    background: url(/assets/icons/screen-no-data.svg) center top no-repeat;
+  }
+  &.code {
+    background: url(/assets/icons/screen-code.svg) center top no-repeat;
+  }
+  &.run {
+    background: url(/assets/icons/screen-run.svg) center top no-repeat;
+  }
+  &.actors {
+    background: url(/assets/icons/screen-actor.svg) center top no-repeat;
+  }
+  &.fine {
+    background: url(/assets/icons/screen-fine.svg) center top no-repeat;
+  }
+  &.test {
+    background: url(/assets/icons/screen-test.svg) center top no-repeat;
+  }
+}
+
+.shortcuts {
+  padding: 10px;
+  .key {
+    color: #fff;
+    display: inline-block;
+    min-width: 130px;
+    text-align: right;
+    padding-right: 10px;
+  }
+}

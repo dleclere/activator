@@ -2,69 +2,73 @@ import sbt._
 import Keys._
 
 object Dependencies {
-  val sbtVersion = "0.13.5"
-  val sbtLibraryVersion = "0.13.6-M1" // for sbtIO on scala 2.11
-  val sbtPluginVersion = "0.13"
-  val sbtPluginScalaVersion = "2.11.1"
-  val scalaVersion = "2.11.1"
-  val luceneVersion = "4.2.1"
-  val templateCacheVersion = "1.0-6830c15252733edf977c869af798d113ad5ac80d"
-  val sbtRcVersion = "1.0-c50ddab5e1332398049a2a649261e1ca24577479"
+  val sbtVersion = "0.13.8"
+  val sbtLibraryVersion = "0.13.8" // for sbtIO on scala 2.11
 
-  val playVersion = "2.3.3"
-  val akkaVersion = "2.3.4"
-  val slickVersion = "2.1.0"
-  val echoPluginVersion = "0.1.5"
-  val activatorAnalyticsVersion = "0.1.6"
-  val aspectJVersion = "1.7.3"
+  val sbtPluginVersion = "0.13"
+  val sbtPluginScalaVersion = "2.11.7"
+  val scalaVersion = "2.11.7"
+  val scala210Version = "2.10.4"
+  val luceneVersion = "4.2.1"
+
+  val templateCacheVersion = "1.0-3c50ec793f424aca7a39338af78a3664019482bc"
+  val sbtRcVersion = "0.3.5"
+  val sbtCoreNextVersion = "0.1.1"
+
+  val shimPlayVersion = "2.4.2"
+  val play23Version = "2.3.9"
+  val akka22Version = "2.2.4"
+  val akka23Version = "2.3.11"
+  val slickVersion = "3.0.0"
+  val activatorAnalyticsVersion = "0.1.8"
+  val aspectJVersion = "1.8.4"
+
+  // versions used by build to set dependencies in JS
+  val ideaVersion = "1.6.0"
+  val eclipseVersion = "4.0.0"
 
   val activatorCommon      = "com.typesafe.activator" % "activator-common" % templateCacheVersion
   val templateCache        = "com.typesafe.activator" % "activator-templates-cache" % templateCacheVersion
 
-  val sbtIo210                = "org.scala-sbt" % "io" % sbtVersion
-  val sbtLauncherInterface    = "org.scala-sbt" % "launcher-interface" % sbtVersion
-  val sbtIo                   = "org.scala-sbt" %% "io" % sbtLibraryVersion
-  val sbtCompletion           = "org.scala-sbt" %% "completion" % sbtLibraryVersion
+  // 2.10 sbt
+  val sbtIo210             = "org.scala-sbt" % "io" % sbtVersion
+  // launcher interface is pure Java, no scala versioning
+  val sbtLauncherInterface = "org.scala-sbt" % "launcher-interface" % sbtVersion
+
+  // 2.11 sbt
+  val sbtIo                = "org.scala-sbt" %% "io" % sbtLibraryVersion
+  val sbtCompletion        = "org.scala-sbt" %% "completion" % sbtLibraryVersion
 
   // sbtrc projects
-  val sbtrcRemoteController = "com.typesafe.sbtrc" % "sbt-rc-remote-controller" % sbtRcVersion
+  val sbtrcClient          = "com.typesafe.sbtrc" % "client-2-11" % sbtRcVersion
+  val sbtrcIntegration     = "com.typesafe.sbtrc" % "integration-tests" % sbtRcVersion
 
-  // Probes
-  val sbtrcProbe13           = "com.typesafe.sbtrc" % "sbt-rc-probe-0-13" % sbtRcVersion
-  val sbtshimUiInterface13   = "com.typesafe.sbtrc" % "sbt-rc-ui-interface-0-13" % sbtRcVersion
-
-  val akkaActor            = "com.typesafe.akka" %% "akka-actor" % akkaVersion
-  val akkaSlf4j            = "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
-  val akkaTestkit          = "com.typesafe.akka" %% "akka-testkit"% akkaVersion
+  val akkaActor            = "com.typesafe.akka" %% "akka-actor" % akka23Version
+  val akkaSlf4j            = "com.typesafe.akka" %% "akka-slf4j" % akka23Version
+  val akkaTestkit          = "com.typesafe.akka" %% "akka-testkit"% akka23Version
 
   val commonsIo            = "commons-io" % "commons-io" % "2.0.1"
 
-  val mimeUtil             = "eu.medsea.mimeutil" % "mime-util" % "2.1.1" exclude("org.slf4j", "slf4j-log4j12") exclude("org.slf4j", "slf4j-api") exclude("log4j", "log4j")
+  val mimeUtil             = "eu.medsea.mimeutil" % "mime-util" % "2.1.3" exclude("org.slf4j", "slf4j-log4j12") exclude("org.slf4j", "slf4j-api") exclude("log4j", "log4j")
 
   val junitInterface       = "com.novocode" % "junit-interface" % "0.7"
   val specs2               = "org.specs2" % "specs2_2.11" % "2.3.11"
 
   // SBT 0.13 required plugins
-  val playSbt13Plugin        =  Defaults.sbtPluginExtra("com.typesafe.play" % "sbt-plugin" % playVersion, "0.13", "2.10")
-  val eclipseSbt13Plugin     =  Defaults.sbtPluginExtra("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.2.0", "0.13", "2.10")
+  val playSbt13Plugin        =  Defaults.sbtPluginExtra("com.typesafe.play" % "sbt-plugin" % shimPlayVersion, "0.13", "2.10")
+  val eclipseSbt13Plugin     =  Defaults.sbtPluginExtra("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "4.0.0", "0.13", "2.10")
   val ideaSbt13Plugin        =  Defaults.sbtPluginExtra("com.github.mpeltonen" % "sbt-idea" % "1.5.2", "0.13", "2.10")
-  val echoSbt13Plugin        =  Defaults.sbtPluginExtra("com.typesafe.sbt" % "sbt-echo-play" % echoPluginVersion, "0.13", "2.10")
-  val echoPlaySbt13Plugin    =  Defaults.sbtPluginExtra("com.typesafe.sbt" % "sbt-echo" % echoPluginVersion, "0.13", "2.10")
 
   // Embedded databases / index
   val lucene = "org.apache.lucene" % "lucene-core" % luceneVersion
   val luceneAnalyzerCommon = "org.apache.lucene" % "lucene-analyzers-common" % luceneVersion
   val luceneQueryParser = "org.apache.lucene" % "lucene-queryparser" % luceneVersion
 
-
   // WebJars for the Activator UI
   val requirejs        = "org.webjars" % "requirejs" % "2.1.11"
   val jquery           = "org.webjars" % "jquery" % "2.0.3"
-  val knockout         = "org.webjars" % "knockout" % "3.0.0"
-  val ace              = "org.webjars" % "ace" % "1.1.3"
-  // TODO : Use again when there is are new webjars versions to be pulled in
-  //val requireCss       = "org.webjars" % "require-css" % "0.0.7-3"
-  //val requireText      = "org.webjars" % "requirejs-text" % "2.0.10"
+  val knockout         = "org.webjars" % "knockout" % "3.3.0"
+  val ace              = "org.webjars" % "ace" % "1.1.7-1"
   val keymage          = "org.webjars" % "keymage" % "1.0.1"
 
   // Analyzers used by Inspect
@@ -121,4 +125,14 @@ object Dependencies {
       _.classpath
     }
   }
+
+  val sbtBackgroundRun = Defaults.sbtPluginExtra("org.scala-sbt" % "sbt-core-next" % sbtCoreNextVersion, "0.13", "2.10")
+
+  def playPlugin: Seq[Setting[_]] = Seq(
+    resolvers += Classpaths.typesafeSnapshots,
+    resolvers += "Typesafe Maven Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/",
+    resolvers += "Typesafe Maven Releases" at "http://repo.typesafe.com/typesafe/releases/"
+  )
+  // *** END SBT-ECHO DEPENDENCIES ***
+
 }

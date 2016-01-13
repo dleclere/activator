@@ -1,320 +1,79 @@
 /*
- Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
  */
 @import "../../commons/_base";
-@import "./_typesafe";
-
-@-webkit-keyframes glow {
-  0% {
-    background-color: @blue;
-  }
-  100% {
-    background-color: @grey;
-  }
-}
-@-moz-keyframes glow {
-  0% {
-    background-color: @blue;
-  }
-  100% {
-    background-color: @grey;
-  }
-}
-@keyframes glow {
-  0% {
-    background-color: @blue;
-  }
-  100% {
-    background-color: @grey;
-  }
-}
 
 #navigation {
-  background: @slate;
-  overflow: hidden;
-  color: white;
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
+  .column();
   width: @drawer-width;
-  box-shadow: inset -3px 0 0 rgba(0,0,0,.1);
+  background: @slate;
+  color: white;
+  box-shadow: inset -4px 0 0 rgba(0,0,0,.1), inset -1px 0 0 rgba(0,0,0,.2);
   z-index: 5;
 }
 
 #rockets {
-  width: @drawer-width;
-  position: absolute;
-  top: 100px;
-  bottom: 40px;
-  .inner {
-    overflow-x: hidden;
-    overflow-y: auto;
-    height: 100%;
-    width: 100%;
-  }
+  .expand();
+  overflow: auto;
   dt {
-    padding: 13px 10px 12px;
-    margin-top: 10px;
-    font-size: 15px;
+    .narrow();
+    padding: 0 10px;
+    line-height: 40px;
+    font-size: 14px;
     text-transform: uppercase;
     background: @slate-ltr;
-    color: @grey;
-    box-shadow: inset -2px 0 0 rgba(0,0,0,.1);
-    border-bottom: 2px solid @slate;
-    // .transition();
-    width: @drawer-width;
-    left: 0;
-    &:first-of-type {
-      margin-top: 0;
-    }
-    &.stick {
-      position: absolute;
-      & + dd {
-        margin-top: 42px;
-      }
-    }
-    &.active {
-      color: #fff;
-      background-color: @grey;
-      box-shadow: none;
-      &:after {
-        color: #fff;
-      }
-    }
-    &.closed {
-      & + dd {
-        //display: none;
-        padding-top: 0;
-        padding-bottom: 0;
-        margin-top: 0;
-        margin-bottom: 0;
-        overflow: hidden;
-        height: 0;
-      }
-    }
-
+    color: @grey-ltr;
+    box-shadow: inset -4px 0 0 rgba(0,0,0,.1), inset -1px 0 0 rgba(0,0,0,.2);
   }
   dd {
-    overflow: visible;
+    padding: 0 0 10px;
   }
   a {
-    display: block;
-    padding: 0 10px;
     position: relative;
+    display: block;
+    padding: 3px 10px;
     color: @grey;
     line-height: 25px;
     text-decoration: none;
     .transition();
-    &:hover {
-      color: white;
-    }
     &.active {
-      color: white;
-      background: @blue;
+      background: @blue-dkr;
+      box-shadow: inset -4px 0 0 rgba(0,0,0,.08), inset -1px 0 0 rgba(0,0,0,.2);
     }
-    &.warning:after {
-      background-color: @red;
-    }
-    &:hover:after {
+    &:hover, &.active {
       color: white;
     }
   }
-  .working {
-    // content: "\27f3";
-    background: url(/public/images/working.svg) center center no-repeat;
+  .counter {
     position: absolute;
-    top: 3px;
-    right: 23px;
-    width: 18px;
-    height: 18px;
-    display: block;
-    -webkit-animation: spin 1s infinite linear;
-    -moz-animation: spin 1s infinite linear;
-    -ms-animation: spin 1s infinite linear;
-    -o-animation: spin 1s infinite linear;
-    animation: spin 1s infinite linear;
-  }
-  .counter:not(:empty) {
-    position: absolute;
-    top: 2px;
-    right: 7px;
+    top: 7px;
+    right: 8px;
     min-width: 16px;
     height: 16px;
-    display: block;
-    background-color: @red;
-    color: white;
-    font-size: 12px;
     line-height: 16px;
+    border-radius: 10px;
     text-align: center;
-    padding: 0 2px;
-    margin: 2px 0;
-    border-radius: 2px;
-  }
-
-}
-
-@-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
-}
-
-@-moz-keyframes spin {
-  0% { -moz-transform: rotate(0deg); }
-  100% { -moz-transform: rotate(360deg); }
-}
-
-@-ms-keyframes spin {
-  0% { -ms-transform: rotate(0deg); }
-  100% { -ms-transform: rotate(360deg); }
-}
-
-@-o-keyframes spin {
-  0% { -o-transform: rotate(0deg); }
-  100% { -o-transform: rotate(360deg); }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-#switch {
-  background: @red;
-  height: 50px;
-  position: absolute;
-  dt, dd {
-    width: @drawer-width;
-    cursor: pointer;
-  }
-  dt {
-    font: inherit;
-    line-height: 50px;
-    background: url('/public/images/select.svg') 10px 27px no-repeat, url('/public/images/select.svg') 10px -22px no-repeat;
-    .transition();
-    padding: 0 10px 0 28px;
-    height: 50px;
-    .ellipsis();
-  }
-  dd {
-    background: @red-dkr;
-    max-height: 300px;
-    overflow: auto;
-  }
-  &:hover dt {
-    background-position: 10px 32px, 10px -27px;
-  }
-  a {
-    display: block;
-    border-top: 1px solid @red;
-    padding: 10px;
-    text-decoration: none;
+    padding: 0 6px;
+    background: @red;
     color: #fff;
-    &:hover {
-      background: #fff;
-      color: @red;
-    }
-  }
-  small {
-    display: block;
-    opacity: .7;
-    .ellipsis();
-  }
-  button, .button {
-    display: block;
-    background: #fff;
-    color: @red;
-    width: 90%;
-    margin: 8px auto;
-    text-align: center;
-    padding: 7px 10px;
     font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    border-radius: 2px;
-    &:hover {
-      color: @red-dkr;
-    }
   }
-}
-
-#appStatus {
-  text-align: center;
-  padding: 10px 0 5px;
-  width: @drawer-width;
-  position: absolute;
-  top: 50px;
-  button {
-    display: inline-block;
-    .square(30px);
-    background: url(/public/images/icons/status.svg) 0 0 no-repeat;
-    background-color: @grey;
-    .transition();
-    &:hover {
-      opacity: .7;
-      background-color: @blue;
-      + .tooltip {
-        display: block;
-      }
-    }
-    &.working {
-      -webkit-animation: 300ms glow infinite alternate linear;
-      -moz-animation: 300ms glow infinite alternate linear;
-      animation: 300ms glow infinite alternate linear;
-    }
-    &.active {
-      opacity: 1;
-      background-color: @blue;
-    }
-  }
-  .tooltip {
-    display: none;
+  .stamp {
     position: absolute;
-    top: 45px;
-    left: 10px;
+    top: 10px;
     right: 10px;
-    padding: 5px;
-    background: @grey-dkr;
-    color: #fff;
-    border-radius: 2px;
-    z-index: 9;
-    font-size: 11px;
-    text-transform: uppercase;
-    font-weight: 600;
-    box-shadow: 0 3px 5px rgba(0,0,0,.4);
-    &:before {
-      content: " ";
-      position: absolute;
-      top: -5px;
-      width: 0; 
-      height: 0; 
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
-      border-bottom: 5px solid @grey-dkr;
+    height: 10px;
+    width: 10px;
+    line-height: 10px;
+    border-radius: 10px;
+    background: @blue;
+    &.building {
+      background: @grey-dkr;
     }
   }
-  button.running {
-    background-position: 0 0;
-  }
-  .running.tooltip:before {
-    left: 22px;
-  }
-  button.refresh {
-    background-position: -30px 0;
-  }
-  .refresh.tooltip:before {
-    left: 56px;
-  }
-  button.console {
-    background-position: -60px 0;
-  }
-  .console.tooltip:before {
-    left: 91px;
-  }
-  button.testing {
-    background-position: -90px 0;
-  }
-  .testing.tooltip:before {
-    left: 125px;
-  }
 }
+

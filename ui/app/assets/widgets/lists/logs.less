@@ -1,0 +1,79 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+article.logsPlugin {
+  table {
+    .monospace();
+    table-layout: fixed;
+    // width: 100%;
+    th, td {
+      padding: 3px 5px 3px 20px;
+      border-top: 1px solid @slate-ltr;
+    }
+    th {
+      text-align: left;
+      width: 60%;
+    }
+    tr.error {
+      color: @red-ltr;
+    }
+    tr.active {
+      color: #fff;
+    }
+    tr.stopping {
+      color: #F5DB89;
+    }
+  }
+
+  .logs-wrapper {
+    .expand(5);
+  }
+
+  .logs {
+
+    li {
+      padding: 4px 16px;
+      box-shadow: 0 1px 0 @slate-ltr;
+      border-left: 3px solid @grey;
+      .monospace();
+      color: @grey;
+      line-height: 16px;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
+
+    li[data-type='sbt.protocol.LogSuccess'] { border-color: #6AB729; color: #D7F3AC; }
+    li[data-type='sbt.protocol.LogStdErr']  { border-color: #E25758; color: @red-ltr; }
+    li[data-level='error']  { border-color: #E25758; color: @red-ltr; }
+    li[data-level='warn']   { border-color: #F89614; }
+    li[data-level='info']   { border-color: #53cdec; }
+    li[data-level='debug']  { border-color: @slate; color: @grey-dkr; }
+
+    li[data-level='debug'] { display: none; }
+    .show-debug li[data-level='debug'] { display: block; }
+  }
+
+
+  .table-wrapper, .logs {
+    .expand();
+    height: 400px; // Default value for IE11
+    overflow: auto;
+  }
+
+
+  .toBottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,.3);
+    text-align: center;
+    cursor: pointer;
+    &.hide {
+      display: none;
+    }
+  }
+
+}

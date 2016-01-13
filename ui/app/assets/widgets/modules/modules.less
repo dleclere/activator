@@ -1,0 +1,45 @@
+/*
+ Copyright (C) 2014 Typesafe, Inc <http://typesafe.com>
+ */
+@import "../../commons/_base";
+
+@import "./pluginMain";
+@import "./pluginBlock";
+
+article.module {
+
+  header {
+    background: @blue;
+    color: #fff;
+    height: 50px;
+    line-height: 50px;
+    padding: 0 15px;
+    .buttons {
+      margin-top: 10px;
+    }
+  }
+  aside {
+    background: @blue-dkr;
+    color: #fff;
+    height: 30px;
+    line-height: 20px;
+    padding: 4px 15px;
+  }
+  footer {
+    background: yellow;
+  }
+
+  .list {
+    li {
+      padding: 10px 15px;
+      border-top: 1px solid @break;
+      &:first-child {
+        border-top: none;
+      }
+      &:hover {
+        background: @light;
+      }
+    }
+  }
+
+}

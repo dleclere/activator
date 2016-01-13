@@ -8,7 +8,7 @@ define(function() {
   var fileMarkers = {};
 
   function ensureFileMarkers(filename) {
-    if (filename.length > 0 && filename[0] == '/') {
+    if (filename.length > 0 && filename[0] === '/') {
       filename = filename.slice(1);
     }
 
@@ -26,13 +26,13 @@ define(function() {
 
   function registerFileMarker(ownerId, filename, line, kind, message) {
     var markers = ensureFileMarkers(filename);
-    if (typeof(line) == 'string')
+    if (typeof(line) === 'string')
       line = parseInt(line);
     var marker = { owner: ownerId, line: line, kind: kind, message: message };
 
     // remove previous marker on same line
     markers.remove(function(m) {
-      return m.line == marker.line;
+      return m.line === marker.line;
     });
     // put in the new one
     markers.push(marker);
@@ -43,7 +43,7 @@ define(function() {
     debug && console.log("clearing file markers for ", ownerId);
     $.each(fileMarkers, function(filename, markers) {
       markers.remove(function(item) {
-        return item.owner == ownerId;
+        return item.owner === ownerId;
       });
     });
   }
